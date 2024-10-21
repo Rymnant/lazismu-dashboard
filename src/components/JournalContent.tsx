@@ -86,9 +86,10 @@ const JournalContent: React.FC = () => {
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{entry.id}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{entry.name}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  <button className="text-orange-600 hover:text-orange-900">
-                    <TrashIcon className="h-5 w-5" />
-                  </button>
+                <button className="text-orange-600 hover:text-orange-900 flex items-center rounded-sm outline outline-gray-200 outline-1 outline-offset-4">
+                  <TrashIcon className="h-5 w-5 mr-2" />
+                    <span style={{color: 'black'}}>Hapus</span>
+                </button>
                 </td>
               </tr>
             ))}
