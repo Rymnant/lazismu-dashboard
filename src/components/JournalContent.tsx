@@ -1,33 +1,80 @@
 'use client'
 
-import React, { useState } from 'react'
-import { ChevronDownIcon, MagnifyingGlassIcon, PlusIcon, TrashIcon, ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
+import React, { useState, useMemo, useCallback } from 'react'
+import { ChevronDownIcon, MagnifyingGlassIcon, PlusIcon, TrashIcon, ChevronLeftIcon, ChevronRightIcon, XCircleIcon } from '@heroicons/react/24/outline'
 
 type JournalEntry = {
   id: number
   name: string
+  year: number
+  month: number
 }
 
 // Generate 100 journal entries for demonstration
-const journalEntries: JournalEntry[] = Array.from({ length: 100 }, (_, i) => ({
-  id: i + 1,
-  name: `Jurnal ${i + 1} ${2022 + Math.floor(i / 12)}`,
-}))
+const journalEntries: JournalEntry[] = Array.from({ length: 100 }, (_, i) => {
+  const date = new Date(2021, 0, 1)
+  date.setMonth(date.getMonth() + i)
+  return {
+    id: i + 1,
+    name: `Jurnal ${date.toLocaleString('default', { month: 'long' })} ${date.getFullYear()}`,
+    year: date.getFullYear(),
+    month: date.getMonth() + 1,
+  }
+})
 
 const ITEMS_PER_PAGE = 7
 
 const JournalContent: React.FC = () => {
-  const [selectedYear, setSelectedYear] = useState<string>('2022')
-  const [selectedMonth, setSelectedMonth] = useState<string>('Juni')
+  const [selectedYear, setSelectedYear] = useState<number | null>(null)
+  const [selectedMonth, setSelectedMonth] = useState<number | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
+  const [searchTerm, setSearchTerm] = useState('')
 
-  const totalPages = Math.ceil(journalEntries.length / ITEMS_PER_PAGE)
+  const filteredEntries = useMemo(() => {
+    return journalEntries.filter((entry) => {
+      const matchesYear = selectedYear ? entry.year === selectedYear : true
+      const matchesMonth = selectedMonth ? entry.month === selectedMonth : true
+      const matchesSearch = entry.name.toLowerCase().includes(searchTerm.toLowerCase())
+      return matchesYear && matchesMonth && matchesSearch
+    })
+  }, [selectedYear, selectedMonth, searchTerm])
+
+  const totalPages = Math.ceil(filteredEntries.length / ITEMS_PER_PAGE)
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
   const endIndex = startIndex + ITEMS_PER_PAGE
-  const currentEntries = journalEntries.slice(startIndex, endIndex)
+  const currentEntries = filteredEntries.slice(startIndex, endIndex)
 
   const goToPage = (page: number) => {
     setCurrentPage(page)
+  }
+
+  const handleYearChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const year = e.target.value === '' ? null : parseInt(e.target.value, 10)
+    setSelectedYear(year)
+    setCurrentPage(1)
+  }
+
+  const handleMonthChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const month = e.target.value === '' ? null : parseInt(e.target.value, 10)
+    setSelectedMonth(month)
+    setCurrentPage(1)
+  }
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value)
+    setCurrentPage(1)
+  }
+
+  const clearFilters = useCallback(() => {
+    setSelectedYear(null)
+    setSelectedMonth(null)
+    setSearchTerm('')
+    setCurrentPage(1)
+  }, [])
+
+  const clearSearch = () => {
+    setSearchTerm('')
+    setCurrentPage(1)
   }
 
   const renderPageButtons = () => {
@@ -106,42 +153,70 @@ const JournalContent: React.FC = () => {
   return (
     <div className="p-6">
       <h1 className="text-2xl font-semibold mb-6">Jurnal Umum</h1>
-      <div className="flex justify-between items-center mb-4">
-        <div className="flex space-x-4">
-          <div className="relative">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 space-y-4 sm:space-y-0">
+        <div className="flex flex-wrap items-center space-x-4">
+          <div className="relative" style={{color: 'black'}}>
             <select
-              value={selectedYear}
-              onChange={(e) => setSelectedYear(e.target.value)}
+              value={selectedYear || ''}
+              onChange={handleYearChange}
               className="appearance-none bg-white border border-gray-300 rounded-md pl-3 pr-10 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-orange-500 focus:border-orange-500"
             >
-              <option>2022</option>
-              <option>2021</option>
+              <option value="">All Years</option>
+              {Array.from(new Set(journalEntries.map(entry => entry.year))).map(year => (
+                <option key={year} value={year}>{year}</option>
+              ))}
             </select>
             <ChevronDownIcon className="absolute right-3 top-2.5 h-5 w-5 text-gray-400" />
           </div>
-          <div className="relative">
+          <div className="relative" style={{color: 'black'}}>
             <select
-              value={selectedMonth}
-              onChange={(e) => setSelectedMonth(e.target.value)}
+              value={selectedMonth || ''}
+              onChange={handleMonthChange}
               className="appearance-none bg-white border border-gray-300 rounded-md pl-3 pr-10 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-orange-500 focus:border-orange-500"
             >
-              <option>Juni</option>
-              <option>Mei</option>
-              <option>April</option>
+              <option value="">All Months</option>
+              {Array.from({ length: 12 }, (_, i) => i + 1).map(month => (
+                <option key={month} value={month}>
+                  {new Date(2000, month - 1, 1).toLocaleString('default', { month: 'long' })}
+                </option>
+              ))}
             </select>
             <ChevronDownIcon className="absolute right-3 top-2.5 h-5 w-5 text-gray-400" />
           </div>
+          {(selectedYear !== null || selectedMonth !== null) && (
+            <button
+              onClick={() => {
+                setSelectedYear(null)
+                setSelectedMonth(null)
+                setCurrentPage(1)
+              }}
+              className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+            >
+              <XCircleIcon className="h-5 w-5 mr-1" />
+              Clear Filters
+            </button>
+          )}
         </div>
-        <div className="flex items-center">
-          <div className="relative mr-4">
+        <div className="flex items-center w-full sm:w-auto">
+          <div className="relative flex-grow sm:flex-grow-0" style={{color: 'black'}}>
             <input
               type="text"
               placeholder="Cari"
-              className="bg-white border border-gray-300 rounded-md pl-10 pr-4 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-orange-500 focus:border-orange-500"
+              value={searchTerm}
+              onChange={handleSearchChange}
+              className="w-full bg-white border border-gray-300 rounded-md pl-10 pr-10 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-orange-500 focus:border-orange-500"
             />
             <MagnifyingGlassIcon className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+            {searchTerm && (
+              <button
+                onClick={clearSearch}
+                className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600"
+              >
+                <XCircleIcon className="h-5 w-5" />
+              </button>
+            )}
           </div>
-          <button className="bg-orange-500 text-white rounded-md px-4 py-2 text-sm font-medium hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500">
+          <button className="ml-4 bg-orange-500 text-white rounded-md px-4 py-2 text-sm font-medium hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500">
             <PlusIcon className="h-5 w-5" />
           </button>
         </div>
@@ -197,8 +272,8 @@ const JournalContent: React.FC = () => {
         <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
           <div>
             <p className="text-sm text-gray-700">
-              Showing <span className="font-medium">{startIndex + 1}</span> to <span className="font-medium">{Math.min(endIndex, journalEntries.length)}</span> of{' '}
-              <span className="font-medium">{journalEntries.length}</span> results
+              Showing <span className="font-medium">{startIndex + 1}</span> to <span className="font-medium">{Math.min(endIndex, filteredEntries.length)}</span> of{' '}
+              <span className="font-medium">{filteredEntries.length}</span> results
             </p>
           </div>
           <div>
@@ -215,7 +290,7 @@ const JournalContent: React.FC = () => {
               <button
                 onClick={() => goToPage(currentPage + 1)}
                 disabled={currentPage === totalPages}
-                className="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
+                className="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50  focus:z-20 focus:outline-offset-0"
               >
                 <span className="sr-only">Next</span>
                 <ChevronRightIcon className="h-5 w-5" aria-hidden="true" />
