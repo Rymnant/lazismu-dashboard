@@ -221,8 +221,8 @@ const JournalContent: React.FC = () => {
           </button>
         </div>
       </div>
-      <div className="overflow-x-auto bg-white shadow sm:rounded-lg">
-        <div className="inline-block min-w-full align-middle">
+      <div className="bg-white shadow overflow-hidden sm:rounded-lg">
+        <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
@@ -250,11 +250,18 @@ const JournalContent: React.FC = () => {
                   </td>
                 </tr>
               ))}
+              {currentEntries.length < ITEMS_PER_PAGE && (
+                <tr>
+                  <td colSpan={3} className="px-6 py-4">
+                    <div style={{ height: `${(ITEMS_PER_PAGE - currentEntries.length) * 46}px` }}></div>
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
       </div>
-      <div className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6 mt-4">
+      <div className="mt-4 flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
         <div className="flex flex-1 justify-between sm:hidden">
           <button
             onClick={() => goToPage(currentPage - 1)}
@@ -283,7 +290,7 @@ const JournalContent: React.FC = () => {
               <button
                 onClick={() => goToPage(currentPage - 1)}
                 disabled={currentPage === 1}
-                className="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
+                className="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50  focus:z-20 focus:outline-offset-0"
               >
                 <span className="sr-only">Previous</span>
                 <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
@@ -291,7 +298,7 @@ const JournalContent: React.FC = () => {
               {renderPageButtons()}
               <button
                 onClick={() => goToPage(currentPage + 1)}
-                disabled={currentPage ===   totalPages}
+                disabled={currentPage === totalPages}
                 className="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
               >
                 <span className="sr-only">Next</span>
