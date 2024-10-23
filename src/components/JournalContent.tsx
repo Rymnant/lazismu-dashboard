@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useMemo, useCallback } from 'react'
-import { ChevronDownIcon, MagnifyingGlassIcon, PlusIcon, TrashIcon, ChevronLeftIcon, ChevronRightIcon, XCircleIcon } from '@heroicons/react/24/outline'
+import { ChevronDownIcon, MagnifyingGlassIcon, PlusIcon, TrashIcon, ChevronLeftIcon, ChevronRightIcon, XCircleIcon, ArrowUpTrayIcon, XMarkIcon } from '@heroicons/react/24/outline'
 
 type JournalEntry = {
   id: number
@@ -10,7 +10,7 @@ type JournalEntry = {
   month: number
 }
 
-// Generate 100 journal entries for demonstration
+// Dummy data
 const journalEntries: JournalEntry[] = Array.from({ length: 100 }, (_, i) => {
   const date = new Date(2021, 0, 1)
   date.setMonth(date.getMonth() + i)
@@ -24,11 +24,87 @@ const journalEntries: JournalEntry[] = Array.from({ length: 100 }, (_, i) => {
 
 const ITEMS_PER_PAGE = 7
 
-const JournalContent: React.FC = () => {
+const FileUploadModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
+      setSelectedFile(event.target.files[0])
+    }
+  }
+
+  const handleImport = () => {
+    if (selectedFile) {
+      // insert import logic here
+      console.log('Importing file:', selectedFile.name)
+      onClose()
+    }
+  }
+
+  const handleCancelFileSelection = () => {
+    setSelectedFile(null)
+  }
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg p-6 w-full max-w-md">
+        <div className="flex justify-between items-center mb-4" style={{ color: 'black' }}>
+          <h2 className="text-xl font-semibold">Upload File</h2>
+          <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
+            <XMarkIcon className="h-6 w-6" />
+          </button>
+        </div>
+        <div className="mb-4">
+          <label htmlFor="file-upload" className="block text-sm font-medium text-gray-700 mb-2">
+            File terupload:
+          </label>
+          <div className="mt-1 flex justify-between items-center">
+            <input
+              id="file-upload"
+              name="file-upload"
+              type="file"
+              accept=".csv"
+              className="sr-only"
+              onChange={handleFileChange}
+            />
+            <label
+              htmlFor="file-upload"
+              className="relative cursor-pointer bg-white rounded-md font-medium text-gray-500 hover:text-orange-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-orange-500"
+            >
+              <span className="flex items-center space-x-4 mb-4 mt-4">
+                <ArrowUpTrayIcon className="h-6 w-6" />
+                <p>{selectedFile ? selectedFile.name : 'Pilih file'}</p>
+              </span>
+            </label>
+            {selectedFile && (
+              <button
+                type="button"
+                onClick={handleCancelFileSelection}
+                className="ml-1 inline-flex items-center px-2.5 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+              >
+                Cancel
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={handleImport}
+              className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+            >
+              Import
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default function Component() {
   const [selectedYear, setSelectedYear] = useState<number | null>(null)
   const [selectedMonth, setSelectedMonth] = useState<number | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
   const [searchTerm, setSearchTerm] = useState('')
+  const [showFileUpload, setShowFileUpload] = useState(false)
 
   const filteredEntries = useMemo(() => {
     return journalEntries.filter((entry) => {
@@ -87,11 +163,10 @@ const JournalContent: React.FC = () => {
           <button
             key={i}
             onClick={() => goToPage(i)}
-            className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold ${
-              currentPage === i
-                ? 'z-10 bg-orange-600 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-600'
-                : 'text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0'
-            }`}
+            className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold ${currentPage === i
+              ? 'z-10 bg-orange-600 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-600'
+              : 'text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0'
+              }`}
           >
             {i}
           </button>
@@ -122,11 +197,10 @@ const JournalContent: React.FC = () => {
           <button
             key={i}
             onClick={() => goToPage(i)}
-            className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold ${
-              currentPage === i
-                ? 'z-10 bg-orange-600 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-600'
-                : 'text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0'
-            }`}
+            className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold ${currentPage === i
+              ? 'z-10 bg-orange-600 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-600'
+              : 'text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0'
+              }`}
           >
             {i}
           </button>
@@ -155,7 +229,7 @@ const JournalContent: React.FC = () => {
       <h1 className="text-2xl font-semibold mb-6">Jurnal Umum</h1>
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 space-y-4 sm:space-y-0">
         <div className="flex flex-wrap items-center space-x-4">
-          <div className="relative" style={{color: 'black'}}>
+          <div className="relative" style={{ color: 'black' }}>
             <select
               value={selectedYear || ''}
               onChange={handleYearChange}
@@ -168,7 +242,7 @@ const JournalContent: React.FC = () => {
             </select>
             <ChevronDownIcon className="absolute right-3 top-2.5 h-5 w-5 text-gray-400" />
           </div>
-          <div className="relative" style={{color: 'black'}}>
+          <div className="relative" style={{ color: 'black' }}>
             <select
               value={selectedMonth || ''}
               onChange={handleMonthChange}
@@ -198,7 +272,7 @@ const JournalContent: React.FC = () => {
           )}
         </div>
         <div className="flex items-center w-full sm:w-auto">
-          <div className="relative flex-grow sm:flex-grow-0" style={{color: 'black'}}>
+          <div className="relative flex-grow sm:flex-grow-0" style={{ color: 'black' }}>
             <input
               type="text"
               placeholder="Cari"
@@ -216,7 +290,10 @@ const JournalContent: React.FC = () => {
               </button>
             )}
           </div>
-          <button className="ml-4 bg-orange-500 text-white rounded-md px-4 py-2 text-sm font-medium hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500">
+          <button
+            onClick={() => setShowFileUpload(true)}
+            className="ml-4 bg-orange-500 text-white rounded-md px-4 py-2 text-sm font-medium hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+          >
             <PlusIcon className="h-5 w-5" />
           </button>
         </div>
@@ -232,7 +309,7 @@ const JournalContent: React.FC = () => {
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
                   Nama Jurnal
                 </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500  uppercase tracking-wider whitespace-nowrap">
                   Aksi
                 </th>
               </tr>
@@ -245,7 +322,7 @@ const JournalContent: React.FC = () => {
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <button className="text-orange-600 hover:text-orange-900 flex items-center space-x-2 rounded-sm outline outline-gray-200 outline-1 outline-offset-4">
                       <TrashIcon className="h-5 w-5" />
-                        <span style={{color: 'black'}}>Hapus</span>
+                      <span style={{ color: 'black' }}>Hapus</span>
                     </button>
                   </td>
                 </tr>
@@ -253,7 +330,7 @@ const JournalContent: React.FC = () => {
               {currentEntries.length < ITEMS_PER_PAGE && (
                 <tr>
                   <td colSpan={3} className="px-6 py-4">
-                    <div style={{ height: `${(ITEMS_PER_PAGE - currentEntries.length) * 46}px` }}></div>
+                    <div style={{ height: `${(ITEMS_PER_PAGE - currentEntries.length) * 53}px` }}></div>
                   </td>
                 </tr>
               )}
@@ -308,8 +385,7 @@ const JournalContent: React.FC = () => {
           </div>
         </div>
       </div>
+      {showFileUpload && <FileUploadModal onClose={() => setShowFileUpload(false)} />}
     </div>
   )
 }
-
-export default JournalContent
