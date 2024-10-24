@@ -55,9 +55,6 @@ const FileUploadModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
           </button>
         </div>
         <div className="mb-4">
-          <label htmlFor="file-upload" className="block text-sm font-medium text-gray-700 mb-2">
-            File terupload:
-          </label>
           <div className="mt-1 flex justify-between items-center">
             <input
               id="file-upload"
