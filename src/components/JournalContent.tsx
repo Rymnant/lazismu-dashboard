@@ -3,7 +3,7 @@
 import React, { useState, useMemo, useCallback } from 'react'
 import { ChevronDownIcon, MagnifyingGlassIcon, PlusIcon, TrashIcon, ChevronLeftIcon, ChevronRightIcon, XCircleIcon, ArrowUpTrayIcon, XMarkIcon } from '@heroicons/react/24/outline'
 
-type JournalEntry = {
+type JournalEntry = { 
   id: number
   name: string
   year: number

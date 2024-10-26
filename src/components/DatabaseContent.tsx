@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useMemo } from 'react'
-import { ArrowPathIcon, MagnifyingGlassIcon, ChevronLeftIcon, ChevronRightIcon, XCircleIcon } from '@heroicons/react/24/outline'
+import { BellIcon, ArrowPathIcon, MagnifyingGlassIcon, ChevronLeftIcon, ChevronRightIcon, XCircleIcon } from '@heroicons/react/24/outline'
 
 type LoyaltyBadge = {
   type: 'Sporadic' | 'Regular' | 'Generous' | 'Major'
@@ -21,6 +21,13 @@ type Muzakki = {
   year: number
 }
 
+const loyaltyBadges: LoyaltyBadge[] = [
+  { type: 'Sporadic', count: 727, color: 'bg-green-500' },
+  { type: 'Regular', count: 314, color: 'bg-blue-500' },
+  { type: 'Generous', count: 314, color: 'bg-yellow-500' },
+  { type: 'Major', count: 175, color: 'bg-red-500' },
+]
+
 // Dummy data
 const muzakkiData: Muzakki[] = Array.from({ length: 100 }, (_, i) => ({
   id: i + 1,
@@ -33,14 +40,6 @@ const muzakkiData: Muzakki[] = Array.from({ length: 100 }, (_, i) => ({
   donorType: ['Momentum', 'Kecil jarang', 'Besar jarang', 'Kecil sering'][Math.floor(Math.random() * 4)],
   year: 2021 + Math.floor(Math.random() * 2),
 }));
-
-
-const loyaltyBadges: LoyaltyBadge[] = [
-  { type: 'Sporadic', count: 727, color: 'bg-green-500' },
-  { type: 'Regular', count: 314, color: 'bg-blue-500' },
-  { type: 'Generous', count: 314, color: 'bg-yellow-500' },
-  { type: 'Major', count: 175, color: 'bg-red-500' },
-]
 
 const ITEMS_PER_PAGE = 6
 
@@ -150,20 +149,22 @@ export default function DatabasePage() {
   return (
     <div className="p-6" style={{color: 'black'}}>
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-semibold">Database Muzakki</h1>
+        <h1 className="text-2xl font-semibold">Database Muzakki</h1> {/* Notif!? */}
       </div>
 
       <div className="mb-6">
         <h2 className="text-lg font-medium mb-4">Loyalty Badges</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-4 gap-4">
           {loyaltyBadges.map((badge) => (
-            <div key={badge.type} className="bg-white p-4 rounded-lg shadow flex items-center space-x-4">
-              <div className={`${badge.color} text-white h-10 w-10 rounded-full flex items-center justify-center text-lg font-bold`}>
-                {badge.type[0]}
+            <div key={badge.type} className="bg-white p-4 rounded-lg shadow flex items-center space-x-8">
+              <div className='flex-row justify-center'>
+                <div className={`${badge.color} text-white h-12 w-12 rounded-full flex items-center justify-center text-xl font-bold`}>
+                  {badge.type[0]} {/* Ganti ikon */}
+                </div>
+                <p className="text-sm text-gray-500 mt-2 flex justify-center">{badge.type}</p>
               </div>
-              <div>
-                <p className="text-2xl font-bold">{badge.count}</p>
-                <p className="text-sm text-gray-500">{badge.type}</p>
+              <div className='flex-row justify-center space-y-4'>
+                <p className="text-2xl font-bold ">{badge.count}</p>
                 <p className="text-xs text-gray-400">Jumlah muzakki</p>
               </div>
             </div>
@@ -171,18 +172,18 @@ export default function DatabasePage() {
         </div>
       </div>
 
-      <div className="flex justify-between items-center mb-4">
+      <div className="flex flex-col sm:flex-row justify-between items-center mb-4 space-y-4 sm:space-y-0">
         <button className="flex items-center text-gray-600 hover:text-gray-900">
           <ArrowPathIcon className="h-5 w-5 mr-1" />
           Refresh
         </button>
-        <div className="relative">
+        <div className="relative w-full sm:w-auto">
           <input
             type="text"
             placeholder="Cari"
             value={searchTerm}
             onChange={handleSearchChange}
-            className="w-full bg-white border border-gray-300 rounded-md pl-10 pr-10 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-orange-500 focus:border-orange-500"
+            className="w-full sm:w-64 bg-white border border-gray-300 rounded-md pl-10 pr-10 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-orange-500 focus:border-orange-500"
           />
           <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
           {searchTerm && (
@@ -223,10 +224,9 @@ export default function DatabasePage() {
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{muzakki.occupation}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{muzakki.donationType}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{muzakki.donorType}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{muzakki.year}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm  text-gray-500">{muzakki.year}</td>
                 </tr>
               ))}
-            
             </tbody>
           </table>
         </div>
@@ -256,7 +256,7 @@ export default function DatabasePage() {
               <span className="font-medium">{filteredMuzakki.length}</span> results
             </p>
           </div>
-          <div>
+          <div className="overflow-x-auto">
             <nav className="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
               <button
                 onClick={() => goToPage(currentPage - 1)}
