@@ -1,4 +1,6 @@
-import { Muzakki } from './types'
+import { Muzakki, JournalEntry } from './types'
+
+// Muzakki
 
 export const filterMuzakki = (muzakkiData: Muzakki[], searchTerm: string): Muzakki[] => {
   return muzakkiData.filter(muzakki =>
@@ -11,4 +13,20 @@ export const paginateMuzakki = (muzakkiData: Muzakki[], currentPage: number, ite
   const startIndex = (currentPage - 1) * itemsPerPage
   const endIndex = startIndex + itemsPerPage
   return muzakkiData.slice(startIndex, endIndex)
+}
+
+// Journal
+
+export const filterJournalEntries = (journalEntries: JournalEntry[], searchTerm: string): JournalEntry[] => {
+  return journalEntries.filter(entry =>
+    entry.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    entry.month.toString().includes(searchTerm) ||
+    entry.year.toString().includes(searchTerm)
+  )
+}
+
+export const paginateJournalEntries = (journalEntries: JournalEntry[], currentPage: number, itemsPerPage: number): JournalEntry[] => {
+  const startIndex = (currentPage - 1) * itemsPerPage
+  const endIndex = startIndex + itemsPerPage
+  return journalEntries.slice(startIndex, endIndex)
 }

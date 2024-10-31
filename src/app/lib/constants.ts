@@ -1,4 +1,4 @@
-import { LoyaltyBadge, Muzakki } from './types'
+import { LoyaltyBadge, Muzakki, JournalEntry } from './types'
 
 export const ITEMS_PER_PAGE = 7
 
@@ -10,13 +10,24 @@ export const loyaltyBadges: LoyaltyBadge[] = [
 ]
 
 export const muzakkiData: Muzakki[] = Array.from({ length: 100 }, (_, i) => ({
+  id: i + 1,
+  name: `Muzakki ${i + 1}`,
+  phoneNumber: `08123456${String(i).padStart(2, '0')}`, // Penyebab error SSR
+  gender: i % 2 === 0 ? 'Laki' : 'Perempuan',
+  age: 20 + Math.floor(Math.random() * 40),
+  occupation: ['Wiraswasta', 'PNS', 'Mahasiswa'][Math.floor(Math.random() * 3)],
+  donationType: ['DSKL', 'Infaq', 'Zakat'][Math.floor(Math.random() * 3)],
+  donorType: ['Momentum', 'Kecil jarang', 'Besar jarang', 'Kecil sering'][Math.floor(Math.random() * 4)],
+  year: 2021 + Math.floor(Math.random() * 2),
+}));
+
+export const journalEntries: JournalEntry[] = Array.from({ length: 100 }, (_, i) => {
+  const date = new Date(2021, 0, 1)
+  date.setMonth(date.getMonth() + i)
+  return {
     id: i + 1,
-    name: `Muzakki ${i + 1}`,
-    phoneNumber: `08123456${String(i).padStart(2, '0')}`, // Penyebab error SSR
-    gender: i % 2 === 0 ? 'Laki' : 'Perempuan',
-    age: 20 + Math.floor(Math.random() * 40),
-    occupation: ['Wiraswasta', 'PNS', 'Mahasiswa'][Math.floor(Math.random() * 3)],
-    donationType: ['DSKL', 'Infaq', 'Zakat'][Math.floor(Math.random() * 3)],
-    donorType: ['Momentum', 'Kecil jarang', 'Besar jarang', 'Kecil sering'][Math.floor(Math.random() * 4)],
-    year: 2021 + Math.floor(Math.random() * 2),
-  }));
+    name: `Jurnal ${date.toLocaleString('default', { month: 'long' })} ${date.getFullYear()}`,
+    year: date.getFullYear(),
+    month: date.getMonth() + 1,
+  }
+})
