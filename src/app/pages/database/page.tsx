@@ -2,12 +2,13 @@
 
 import { useState, useMemo } from 'react'
 import { BellIcon, ArrowPathIcon } from '@heroicons/react/24/outline'
-import LoyaltyBadges from '../../components/database/LoyaltyBadges'
-import SearchBar from '../../components/common/SearchBar'
-import MuzakkiTable from '../../components/database/MuzakkiTable'
-import Pagination from '../../components/common/Pagination'
-import { loyaltyBadges, muzakkiData, ITEMS_PER_PAGE } from '../../lib/constants'
-import { filterMuzakki, paginateMuzakki } from '../../lib/utils'
+import LoyaltyBadges from '@/app/components/database/LoyaltyBadges'
+import SearchBar from '@/app/components/common/SearchBar'
+import MuzakkiTable from '@/app/components/database/MuzakkiTable'
+import Pagination from '@/app/components/common/Pagination'
+import Notifications from '@/app/components/common/Notifications'
+import { loyaltyBadges, muzakkiData, ITEMS_PER_PAGE } from '@/app/lib/constants'
+import { filterMuzakki, paginateMuzakki } from '@/app/lib/utils'
 
 export default function DatabasePage() {
   const [searchTerm, setSearchTerm] = useState('')
@@ -30,11 +31,8 @@ export default function DatabasePage() {
   return (
     <div className="p-6" style={{color: 'black'}}>
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-semibold">Database Muzakki</h1>
-        <div className="relative">
-          <BellIcon className="h-6 w-6 text-gray-500" />
-          <span className="absolute top-0 right-0 -mt-1 -mr-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">9</span>
-        </div>
+        <h1 className="text-3xl font-semibold">Database Muzakki</h1>
+        <Notifications />
       </div>
 
       <LoyaltyBadges badges={loyaltyBadges} />

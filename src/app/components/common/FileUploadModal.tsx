@@ -18,7 +18,7 @@ export default function FileUploadModal({ onClose }: FileUploadModalProps) {
 
   const handleImport = () => {
     if (selectedFile) {
-      // Here you would handle the file import logic
+      // Logic
       console.log('Importing file:', selectedFile.name)
       onClose()
     }

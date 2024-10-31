@@ -2,12 +2,13 @@
 
 import React, { useState, useMemo, useCallback } from 'react'
 import { PlusIcon, ChevronDownIcon, XCircleIcon, BellIcon } from '@heroicons/react/24/outline'
-import SearchBar from '../../components/common/SearchBar'
-import JournalTable from '../../components/journal/JournalTable'
-import Pagination from '../../components/common/Pagination'
-import FileUploadModal from '../../components/common/FileUploadModal'
-import { journalEntries, ITEMS_PER_PAGE } from '../../lib/constants'
-import { filterJournalEntries, paginateJournalEntries } from '../../lib/utils'
+import SearchBar from '@/app/components/common/SearchBar'
+import JournalTable from '@/app/components/journal/JournalTable'
+import Pagination from '@/app/components/common/Pagination'
+import FileUploadModal from '@/app/components/common/FileUploadModal'
+import Notifications from '@/app/components/common/Notifications'
+import { journalEntries, ITEMS_PER_PAGE } from '@/app/lib/constants'
+import { filterJournalEntries, paginateJournalEntries } from '@/app/lib/utils'
 
 export default function JournalPage() {
   const [searchTerm, setSearchTerm] = useState('')
@@ -59,11 +60,8 @@ export default function JournalPage() {
   return (
     <div className="p-6" style={{color: 'black'}}>
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-semibold">Jurnal Umum</h1>
-        <div className="relative">
-          <BellIcon className="h-6 w-6 text-gray-500" />
-          <span className="absolute top-0 right-0 -mt-1 -mr-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">9</span>
-        </div>
+        <h1 className="text-3xl font-semibold">Jurnal Umum</h1>
+        <Notifications />
       </div>
 
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 space-y-4 sm:space-y-0">

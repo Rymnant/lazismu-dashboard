@@ -1,3 +1,5 @@
+// Database
+
 export type LoyaltyBadge = {
   type: 'Sporadic' | 'Regular' | 'Generous' | 'Major'
   count: number
@@ -15,6 +17,8 @@ export type Muzakki = {
   donorType: string
   year: number
 }
+
+// Journal
 
 export type JournalEntry = {
   id: number
