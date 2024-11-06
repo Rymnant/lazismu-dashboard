@@ -1,14 +1,14 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-import { BellIcon, ArrowPathIcon } from '@heroicons/react/24/outline'
-import LoyaltyBadges from '@/app/components/database/LoyaltyBadges'
-import SearchBar from '@/app/components/common/SearchBar'
-import MuzakkiTable from '@/app/components/database/MuzakkiTable'
-import Pagination from '@/app/components/common/Pagination'
-import Notifications from '@/app/components/common/Notifications'
-import { loyaltyBadges, muzakkiData, ITEMS_PER_PAGE } from '@/app/lib/constants'
-import { filterMuzakki, paginateMuzakki } from '@/app/lib/utils'
+import { ArrowPathIcon } from '@heroicons/react/24/outline'
+import LoyaltyBadges from '@/components/database/LoyaltyBadges'
+import SearchBar from '@/components/common/SearchBar'
+import MuzakkiTable from '@/components/database/MuzakkiTable'
+import Pagination from '@/components/common/Pagination'
+import Notifications from '@/components/common/Notifications'
+import { loyaltyBadges, muzakkiData, ITEMS_PER_PAGE } from '@/lib/constants'
+import { filterMuzakki, paginateMuzakki } from '@/lib/utils'
 
 export default function DatabasePage() {
   const [searchTerm, setSearchTerm] = useState('')

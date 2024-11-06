@@ -1,18 +1,7 @@
 import React from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-
-const sidebarItems = [
-  { name: 'Dashboard', icon: '/icon/dashboard-icon.svg', href: '/pages/dashboard' },
-  { name: 'Jurnal', icon: '/icon/journal-icon.svg', href: '/pages/journal' },
-  { name: 'Database', icon: '/icon/database-icon.svg', href: '/pages/database' },
-  { name: 'Maintenance', icon: '/icon/maintenance-icon.svg', href: '/pages/maintenance' },
-  { name: 'History', icon: '/icon/history-icon.svg', href: '/pages/history' },
-  { name: 'Live Chat', icon: '/icon/chat-icon.svg', href: '/pages/chat' },
-  { name: 'Konten', icon: '/icon/konten-icon.svg', href: '/pages/content' },
-  { name: 'Feedback', icon: '/icon/feedback-icon.svg', href: '/pages/feedback' },
-  { name: 'Kelola Promo', icon: '/icon/promo-icon.svg', href: '/pages/promo' },
-]
+import { sidebarItems } from '@/lib/constants'
 
 const Sidebar: React.FC = () => {
   return (

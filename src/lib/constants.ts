@@ -1,6 +1,20 @@
-import { LoyaltyBadge, Muzakki, JournalEntry } from './types'
+import { LoyaltyBadge, Muzakki, JournalEntry, SidebarItem } from './types'
 
 export const ITEMS_PER_PAGE = 7
+
+// Sidebar
+
+export const sidebarItems: SidebarItem[] = [
+  { name: 'Dashboard', icon: '/icon/dashboard-icon.svg', href: '/' },
+  { name: 'Jurnal', icon: '/icon/journal-icon.svg', href: '/journal' },
+  { name: 'Database', icon: '/icon/database-icon.svg', href: '/database' },
+  { name: 'Maintenance', icon: '/icon/maintenance-icon.svg', href: '/maintenance' },
+  { name: 'History', icon: '/icon/history-icon.svg', href: '/history' },
+  { name: 'Live Chat', icon: '/icon/livechat-icon.svg', href: '/chat' },
+  { name: 'Konten', icon: '/icon/konten-icon.svg', href: '/content' },
+  { name: 'Feedback', icon: '/icon/feedback-icon.svg', href: '/feedback' },
+  { name: 'Kelola Promo', icon: '/icon/promo-icon.svg', href: '/promo' },
+]
 
 // Database 
 

@@ -1,3 +1,11 @@
+// Sidebar
+
+export type SidebarItem = {
+  name: string
+  icon: string
+  href: string
+}
+
 // Database
 
 export type LoyaltyBadge = {

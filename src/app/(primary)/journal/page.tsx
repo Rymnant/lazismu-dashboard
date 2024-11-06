@@ -1,14 +1,14 @@
 'use client'
 
 import React, { useState, useMemo, useCallback } from 'react'
-import { PlusIcon, ChevronDownIcon, XCircleIcon, BellIcon } from '@heroicons/react/24/outline'
-import SearchBar from '@/app/components/common/SearchBar'
-import JournalTable from '@/app/components/journal/JournalTable'
-import Pagination from '@/app/components/common/Pagination'
-import FileUploadModal from '@/app/components/common/FileUploadModal'
-import Notifications from '@/app/components/common/Notifications'
-import { journalEntries, ITEMS_PER_PAGE } from '@/app/lib/constants'
-import { filterJournalEntries, paginateJournalEntries } from '@/app/lib/utils'
+import { PlusIcon, ChevronDownIcon, XCircleIcon } from '@heroicons/react/24/outline'
+import SearchBar from '@/components/common/SearchBar'
+import JournalTable from '@/components/journal/JournalTable'
+import Pagination from '@/components/common/Pagination'
+import FileUploadModal from '@/components/common/FileUploadModal'
+import Notifications from '@/components/common/Notifications'
+import { journalEntries, ITEMS_PER_PAGE } from '@/lib/constants'
+import { filterJournalEntries, paginateJournalEntries } from '@/lib/utils'
 
 export default function JournalPage() {
   const [searchTerm, setSearchTerm] = useState('')
