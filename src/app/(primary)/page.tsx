@@ -1,36 +1,38 @@
 "use client";
 
-import { useState } from "react";
-import { Bar, Line, Pie } from "react-chartjs-2";
+import { useState, useMemo } from "react";
+import { Bar, Pie } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   ArcElement,
   BarElement,
   CategoryScale,
   LinearScale,
-  LineElement,
-  PointElement,
   Title,
   Tooltip,
   Legend,
 } from "chart.js";
+import { muzakkiData } from "../../lib/constants";
+import { Muzakki } from "../../lib/types";
 
 ChartJS.register(
   ArcElement,
   BarElement,
   CategoryScale,
   LinearScale,
-  LineElement,
-  PointElement,
   Title,
   Tooltip,
   Legend
 );
 
 export default function DashboardPage() {
-  const [selectedFilters, setSelectedFilters] = useState({
+  const [selectedFilters, setSelectedFilters] = useState<{
+    gender: string;
+    donationType: string;
+    donorType: string;
+    year: string;
+  }>({
     gender: "Semua",
-    institution: "Semua",
     donationType: "Semua",
     donorType: "Semua",
     year: "Semua",
@@ -40,111 +42,109 @@ export default function DashboardPage() {
     setSelectedFilters((prev) => ({ ...prev, [filterName]: value }));
   };
 
-  // Contoh data
-  const totalMuzakki = 1396;
+  // Filtered data based on selected filters
+  const filteredMuzakki = useMemo(() => {
+    return muzakkiData.filter((muzakki: Muzakki) => {
+      return (
+        (selectedFilters.gender === "Semua" || muzakki.gender === selectedFilters.gender) &&
+        (selectedFilters.donationType === "Semua" || muzakki.donationType === selectedFilters.donationType) &&
+        (selectedFilters.donorType === "Semua" || muzakki.donorType === selectedFilters.donorType) &&
+        (selectedFilters.year === "Semua" || muzakki.year === parseInt(selectedFilters.year))
+      );
+    });
+  }, [selectedFilters]);
 
-  const lineData = {
-    labels: ["2021", "2022", "2023", "2024"],
-    datasets: [
-      {
-        label: "Jumlah Muzakki",
-        data: [500, 600, 450, 750],
-        borderColor: "orange",
-        backgroundColor: "rgba(255, 165, 0, 0.3)",
-        fill: true,
-      },
-    ],
-  };
+  // Chart data based on filtered data
+  const totalMuzakki = filteredMuzakki.length;
 
   const barDataDonationType = {
-    labels: ["DSKL", "Infaq", "Zakat", "Zakat Penghasilan"],
+    labels: ["DSKL", "Infaq", "Zakat"],
     datasets: [
       {
         label: "Jenis Donasi",
-        data: [300, 400, 350, 200],
-        backgroundColor: "rgba(255, 99, 132, 0.6)",
+        data: [
+          filteredMuzakki.filter((m: Muzakki) => m.donationType === "DSKL").length,
+          filteredMuzakki.filter((m: Muzakki) => m.donationType === "Infaq").length,
+          filteredMuzakki.filter((m: Muzakki) => m.donationType === "Zakat").length,
+        ],
+        backgroundColor: ["#4CAF50", "#36A2EB", "#FFCE56"],
       },
     ],
   };
 
   const barDataDonorType = {
-    labels: ["Besar Jarang", "Besar Sering", "Kecil Jarang", "Kecil Sering", "Momentum", "Calon"],
+    labels: ["Momentum", "Kecil jarang", "Besar jarang", "Kecil sering"],
     datasets: [
       {
         label: "Jenis Donatur",
-        data: [150, 250, 180, 200, 220, 140],
-        backgroundColor: "rgba(54, 162, 235, 0.6)",
+        data: [
+          filteredMuzakki.filter((m: Muzakki) => m.donorType === "Momentum").length,
+          filteredMuzakki.filter((m: Muzakki) => m.donorType === "Kecil jarang").length,
+          filteredMuzakki.filter((m: Muzakki) => m.donorType === "Besar jarang").length,
+          filteredMuzakki.filter((m: Muzakki) => m.donorType === "Kecil sering").length,
+        ],
+        backgroundColor: ["#4CAF50", "#36A2EB", "#FFCE56", "#FF6384"],
       },
     ],
   };
 
-  const pieDataGender = {
-    labels: ["Laki-laki", "Perempuan", "Lain"],
-    datasets: [
-      {
-        data: [60, 30, 10],
-        backgroundColor: ["#e0e0e0", "#aaaaaa", "#f1c40f"],
-      },
-    ],
-  };
+const pieDataGender = {
+  labels: ["Laki-laki", "Perempuan"],
+  datasets: [
+    {
+      data: [
+        filteredMuzakki.filter((m: Muzakki) => m.gender.toLowerCase() === "laki-laki").length,
+        filteredMuzakki.filter((m: Muzakki) => m.gender.toLowerCase() === "perempuan").length,
+      ],
+      backgroundColor: ["#36A2EB", "#FF6384"],
+    },
+  ],
+};
 
-  const pieDataInstitution = {
-    labels: ["Badan", "Perorangan"],
-    datasets: [
-      {
-        data: [70, 30],
-        backgroundColor: ["#e0e0e0", "#aaaaaa"],
-      },
-    ],
-  };
 
   return (
     <main className="p-6">
       <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
+
       {/* Filter Section */}
-      <div className="grid grid-cols-5 gap-4 mb-6">
-        {["Jenis Kelamin", "Lembaga", "Jenis Donasi", "Jenis Donatur", "Tahun"].map((filter, index) => (
-          <select
-            key={index}
-            className="border p-2 rounded"
-            onChange={(e) =>
-              handleFilterChange(
-                filter.toLowerCase().replace(" ", "") as keyof typeof selectedFilters,
-                e.target.value
-              )
-            }
-          >
-            <option value="Semua">{filter}</option>
-            <option value="Option1">Option 1</option>
-            <option value="Option2">Option 2</option>
-          </select>
+      <div className="flex flex-wrap gap-4 mb-6">
+        {["Gender", "Donation Type", "Donor Type", "Year"].map((filter, index) => (
+          <div key={index} className="flex flex-col">
+            <label className="text-sm font-medium">{filter}</label>
+            <select
+              className="border p-2 rounded-md"
+              onChange={(e) =>
+                handleFilterChange(
+                  filter.toLowerCase().replace(" ", "") as keyof typeof selectedFilters,
+                  e.target.value
+                )
+              }
+            >
+              <option value="Semua">Semua</option>
+              {/* Map options here dynamically */}
+            </select>
+          </div>
         ))}
       </div>
-      {/* Total Muzakki Section */}
-      <div className="mb-6 p-4 bg-white shadow rounded-lg flex items-center justify-between">
-        <h2 className="text-lg font-semibold">Total Muzakki</h2>
-        <span className="text-3xl font-bold text-orange-500">{totalMuzakki}</span>
+
+      {/* Total Muzakki */}
+      <div className="mb-6 p-4 bg-white rounded shadow">
+        <h2 className="text-lg font-medium">Total Muzakki</h2>
+        <p className="text-2xl font-bold text-orange-500">{totalMuzakki}</p>
       </div>
-      {/* Charts Section */}
+
+      {/* Charts */}
       <div className="grid grid-cols-2 gap-4">
-        <div className="bg-white p-4 shadow rounded-lg">
-          <h2 className="text-lg font-semibold mb-4">Tren Jumlah Muzakki</h2>
-          <Line data={lineData} />
-        </div>
-        <div className="bg-white p-4 shadow rounded-lg">
-          <h2 className="text-lg font-semibold mb-4">Distribusi Jenis Kelamin</h2>
+        <div className="bg-white p-4 rounded shadow">
+          <h2 className="text-lg font-medium mb-2">Distribusi Jenis Kelamin</h2>
           <Pie data={pieDataGender} />
         </div>
-        <div className="bg-white p-4 shadow rounded-lg">
-          <h2 className="text-lg font-semibold mb-4">Distribusi Jenis Donasi</h2>
+        <div className="bg-white p-4 rounded shadow">
+          <h2 className="text-lg font-medium mb-2">Distribusi Jenis Donasi</h2>
           <Bar data={barDataDonationType} />
         </div>
-        <div className="bg-white p-4 shadow rounded-lg">
-          <h2 className="text-lg font-semibold mb-4">Distribusi Lembaga</h2>
-          <Pie data={pieDataInstitution} />
-        </div>
-        <div className="bg-white p-4 shadow rounded-lg col-span-2">
-          <h2 className="text-lg font-semibold mb-4">Distribusi Jenis Donatur</h2>
+        <div className="bg-white p-4 rounded shadow col-span-2">
+          <h2 className="text-lg font-medium mb-2">Distribusi Jenis Donatur</h2>
           <Bar data={barDataDonorType} />
         </div>
       </div>
