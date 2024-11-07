@@ -1,25 +1,34 @@
 "use client";
 
+type Muzakki = {
+  gender: string;
+  donationType: string;
+  donorType: string;
+  year: number;
+};
+
 import { useState, useMemo } from "react";
-import { Bar, Pie } from "react-chartjs-2";
+import { Bar, Line, Pie } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   ArcElement,
   BarElement,
   CategoryScale,
   LinearScale,
+  LineElement,
+  PointElement,
   Title,
   Tooltip,
   Legend,
 } from "chart.js";
-import { muzakkiData } from "../../lib/constants";
-import { Muzakki } from "../../lib/types";
 
 ChartJS.register(
   ArcElement,
   BarElement,
   CategoryScale,
   LinearScale,
+  LineElement,
+  PointElement,
   Title,
   Tooltip,
   Legend
@@ -43,6 +52,13 @@ export default function DashboardPage() {
   };
 
   // Filtered data based on selected filters
+  // Sample data for muzakkiData
+  const muzakkiData: Muzakki[] = [
+    { gender: "Laki-laki", donationType: "DSKL", donorType: "Momentum", year: 2021 },
+    { gender: "Perempuan", donationType: "Infaq", donorType: "Kecil jarang", year: 2022 },
+    // Add more sample data as needed
+  ];
+
   const filteredMuzakki = useMemo(() => {
     return muzakkiData.filter((muzakki: Muzakki) => {
       return (
@@ -105,7 +121,6 @@ const pieDataGender = {
   return (
     <main className="p-6">
       <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
-
       {/* Filter Section */}
       <div className="flex flex-wrap gap-4 mb-6">
         {["Gender", "Donation Type", "Donor Type", "Year"].map((filter, index) => (

@@ -1,12 +1,8 @@
-// Sidebar
-
 export type SidebarItem = {
   name: string
   icon: string
   href: string
 }
-
-// Database
 
 export type LoyaltyBadge = {
   type: 'Sporadic' | 'Regular' | 'Generous' | 'Major'
@@ -23,10 +19,9 @@ export type Muzakki = {
   occupation: string
   donationType: string
   donorType: string
+  status: string
   year: number
 }
-
-// Journal
 
 export type JournalEntry = {
   id: number
@@ -34,3 +29,5 @@ export type JournalEntry = {
   year: number
   month: number
 }
+
+export type DonorType = 'Momentum' | 'Kecil Jarang' | 'Kecil Sering' | 'Besar Jarang' | 'Besar Sering'
