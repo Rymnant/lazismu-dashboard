@@ -1,31 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import Notifications from "@/components/common/Notifications";
 import { Bar, Line, Pie } from "react-chartjs-2";
-import {
-  Chart as ChartJS,
-  ArcElement,
-  BarElement,
-  CategoryScale,
-  LinearScale,
-  LineElement,
-  PointElement,
-  Title,
-  Tooltip,
-  Legend,
-} from "chart.js";
+import { Chart as ChartJS, ArcElement, BarElement, CategoryScale, LinearScale, LineElement, PointElement, Title, Tooltip, Legend } from "chart.js";
 
-ChartJS.register(
-  ArcElement,
-  BarElement,
-  CategoryScale,
-  LinearScale,
-  LineElement,
-  PointElement,
-  Title,
-  Tooltip,
-  Legend
-);
+ChartJS.register( ArcElement, BarElement, CategoryScale, LinearScale, LineElement, PointElement, Title, Tooltip, Legend);
 
 export default function DashboardPage() {
   const [selectedFilters, setSelectedFilters] = useState({
@@ -100,7 +80,11 @@ export default function DashboardPage() {
 
   return (
     <main className="p-6">
-      <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-semibold">Dashboard</h1>
+        <Notifications />
+      </div>
+
       {/* Filter Section */}
       <div className="grid grid-cols-5 gap-4 mb-6">
         {["Jenis Kelamin", "Lembaga", "Jenis Donasi", "Jenis Donatur", "Tahun"].map((filter, index) => (
