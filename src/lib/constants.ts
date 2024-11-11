@@ -2,6 +2,8 @@ import { LoyaltyBadge, Muzakki, JournalEntry, SidebarItem } from './types'
 
 export const ITEMS_PER_PAGE = 7
 
+const genders = ['Laki-laki', 'Perempuan'];
+
 function generateIndonesianName() {
   const firstNames = [
     'Ahmad', 'Muhammad', 'Siti', 'Nur', 'Abdul', 'Sri', 'Andi', 'Agus', 'Dwi', 'Tri',
@@ -14,13 +16,13 @@ function generateIndonesianName() {
   return `${firstNames[Math.floor(Math.random() * firstNames.length)]} ${lastNames[Math.floor(Math.random() * lastNames.length)]}`
 }
 
-export const donorTypes = ['Momentum', 'Kecil Jarang', 'Kecil Sering', 'Besar Jarang', 'Besar Sering']
+export const donorTypes = ['Momentum', 'Kecil jarang', 'Besar jarang', 'Kecil sering', 'Besar sering']
 
-export const muzakkiData: Muzakki[] = Array.from({ length: 500 }, (_, i) => ({
+export const muzakkiData: Muzakki[] = Array.from({ length: 600 }, (_, i) => ({
   id: i + 1,
   name: generateIndonesianName(),
   phoneNumber: `08123456${String(i).padStart(2, '0')}`,
-  gender: i % 2 === 0 ? 'Laki' : 'Perempuan',
+  gender: genders[Math.floor(Math.random() * genders.length)],
   age: 20 + Math.floor(Math.random() * 40),
   occupation: ['Wiraswasta', 'PNS', 'Mahasiswa'][Math.floor(Math.random() * 3)],
   donationType: ['DSKL', 'Infaq', 'Zakat'][Math.floor(Math.random() * 3)],
@@ -58,3 +60,5 @@ export const loyaltyBadges: LoyaltyBadge[] = [
   { type: 'Generous', count: 314, color: 'bg-yellow-500' },
   { type: 'Major', count: 175, color: 'bg-red-500' },
 ]
+
+export const years = [2021, 2022];

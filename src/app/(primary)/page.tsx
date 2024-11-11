@@ -1,46 +1,104 @@
 "use client";
 
-type Muzakki = {
+import { useState, useMemo } from "react";
+import { Bar, Pie } from "react-chartjs-2";
+import { Chart as ChartJS, ArcElement, BarElement, CategoryScale, LinearScale, Title, Tooltip, Legend } from "chart.js";
+import { muzakkiData, donorTypes, years } from "../../lib/constants";
+import { Muzakki } from "../../lib/types";
+
+ChartJS.register(ArcElement, BarElement, CategoryScale, LinearScale, Title, Tooltip, Legend);
+
+type SelectedFilters = {
   gender: string;
   donationType: string;
   donorType: string;
-  year: number;
+  year: string;
 };
 
-import { useState, useMemo } from "react";
-import { Bar, Line, Pie } from "react-chartjs-2";
-import {
-  Chart as ChartJS,
-  ArcElement,
-  BarElement,
-  CategoryScale,
-  LinearScale,
-  LineElement,
-  PointElement,
-  Title,
-  Tooltip,
-  Legend,
-} from "chart.js";
+type FilterSectionProps = {
+  filterOptions: Record<keyof SelectedFilters, string[]>;
+  selectedFilters: SelectedFilters;
+  handleFilterChange: (filterName: keyof SelectedFilters, value: string) => void;
+};
 
-ChartJS.register(
-  ArcElement,
-  BarElement,
-  CategoryScale,
-  LinearScale,
-  LineElement,
-  PointElement,
-  Title,
-  Tooltip,
-  Legend
+const FilterSection = ({ filterOptions, selectedFilters, handleFilterChange }: FilterSectionProps) => (
+  <div className="flex flex-wrap gap-4 mb-6">
+    {Object.keys(filterOptions).map((filter, index) => {
+      const typedFilter = filter as keyof SelectedFilters;
+      return (
+        <div key={index} className="flex flex-col">
+          <label className="text-sm font-medium">{filter.charAt(0).toUpperCase() + filter.slice(1)}</label>
+          <select
+            className="border p-2 rounded-md"
+            onChange={(e) => handleFilterChange(typedFilter, e.target.value)}
+          >
+            {filterOptions[typedFilter].map((option, idx) => (
+              <option key={idx} value={option}>{option}</option>
+            ))}
+          </select>
+        </div>
+      );
+    })}
+  </div>
 );
 
+type ChartSectionProps = {
+  filteredMuzakki: Muzakki[];
+};
+
+const ChartSection = ({ filteredMuzakki }: ChartSectionProps) => {
+  const barDataDonationType = {
+    labels: ["DSKL", "Infaq", "Zakat"],
+    datasets: [
+      {
+        label: "Jenis Donasi",
+        data: ["DSKL", "Infaq", "Zakat"].map(type => filteredMuzakki.filter((m: Muzakki) => m.donationType === type).length),
+        backgroundColor: ["#4CAF50", "#36A2EB", "#FFCE56"],
+      },
+    ],
+  };
+
+  const barDataDonorType = {
+    labels: donorTypes,
+    datasets: [
+      {
+        label: "Jenis Donatur",
+        data: donorTypes.map(type => filteredMuzakki.filter((m: Muzakki) => m.donorType === type).length),
+        backgroundColor: ["#4CAF50", "#36A2EB", "#FFCE56", "#FF6384", "#FF9F40"],
+      },
+    ],
+  };
+
+  const pieDataGender = {
+    labels: ["Laki-laki", "Perempuan"],
+    datasets: [
+      {
+        data: ["Laki-laki", "Perempuan"].map(gender => filteredMuzakki.filter((m: Muzakki) => m.gender.toLowerCase() === gender.toLowerCase()).length),
+        backgroundColor: ["#36A2EB", "#FF6384"],
+      },
+    ],
+  };
+
+  return (
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="bg-white p-4 rounded shadow">
+        <h2 className="text-lg font-medium mb-2">Distribusi Jenis Kelamin</h2>
+        <Pie data={pieDataGender} />
+      </div>
+      <div className="bg-white p-4 rounded shadow">
+        <h2 className="text-lg font-medium mb-2">Distribusi Jenis Donasi</h2>
+        <Bar data={barDataDonationType} />
+      </div>
+      <div className="bg-white p-4 rounded shadow col-span-2">
+        <h2 className="text-lg font-medium mb-2">Distribusi Jenis Donatur</h2>
+        <Bar data={barDataDonorType} />
+      </div>
+    </div>
+  );
+};
+
 export default function DashboardPage() {
-  const [selectedFilters, setSelectedFilters] = useState<{
-    gender: string;
-    donationType: string;
-    donorType: string;
-    year: string;
-  }>({
+  const [selectedFilters, setSelectedFilters] = useState({
     gender: "Semua",
     donationType: "Semua",
     donorType: "Semua",
@@ -51,118 +109,33 @@ export default function DashboardPage() {
     setSelectedFilters((prev) => ({ ...prev, [filterName]: value }));
   };
 
-  // Filtered data based on selected filters
-  // Sample data for muzakkiData
-  const muzakkiData: Muzakki[] = [
-    { gender: "Laki-laki", donationType: "DSKL", donorType: "Momentum", year: 2021 },
-    { gender: "Perempuan", donationType: "Infaq", donorType: "Kecil jarang", year: 2022 },
-    // Add more sample data as needed
-  ];
+  const filterOptions = {
+    gender: ["Semua", "Laki-laki", "Perempuan"],
+    donationType: ["Semua", "DSKL", "Infaq", "Zakat"],
+    donorType: ["Semua", ...donorTypes],
+    year: ["Semua", ...years.map(String)],
+  };
 
   const filteredMuzakki = useMemo(() => {
-    return muzakkiData.filter((muzakki: Muzakki) => {
+    return muzakkiData.filter((m) => {
       return (
-        (selectedFilters.gender === "Semua" || muzakki.gender === selectedFilters.gender) &&
-        (selectedFilters.donationType === "Semua" || muzakki.donationType === selectedFilters.donationType) &&
-        (selectedFilters.donorType === "Semua" || muzakki.donorType === selectedFilters.donorType) &&
-        (selectedFilters.year === "Semua" || muzakki.year === parseInt(selectedFilters.year))
+        (selectedFilters.gender === "Semua" || m.gender === selectedFilters.gender) &&
+        (selectedFilters.donationType === "Semua" || m.donationType === selectedFilters.donationType) &&
+        (selectedFilters.donorType === "Semua" || m.donorType === selectedFilters.donorType) &&
+        (selectedFilters.year === "Semua" || m.year === parseInt(selectedFilters.year))
       );
     });
   }, [selectedFilters]);
 
-  // Chart data based on filtered data
-  const totalMuzakki = filteredMuzakki.length;
-
-  const barDataDonationType = {
-    labels: ["DSKL", "Infaq", "Zakat"],
-    datasets: [
-      {
-        label: "Jenis Donasi",
-        data: [
-          filteredMuzakki.filter((m: Muzakki) => m.donationType === "DSKL").length,
-          filteredMuzakki.filter((m: Muzakki) => m.donationType === "Infaq").length,
-          filteredMuzakki.filter((m: Muzakki) => m.donationType === "Zakat").length,
-        ],
-        backgroundColor: ["#4CAF50", "#36A2EB", "#FFCE56"],
-      },
-    ],
-  };
-
-  const barDataDonorType = {
-    labels: ["Momentum", "Kecil jarang", "Besar jarang", "Kecil sering"],
-    datasets: [
-      {
-        label: "Jenis Donatur",
-        data: [
-          filteredMuzakki.filter((m: Muzakki) => m.donorType === "Momentum").length,
-          filteredMuzakki.filter((m: Muzakki) => m.donorType === "Kecil jarang").length,
-          filteredMuzakki.filter((m: Muzakki) => m.donorType === "Besar jarang").length,
-          filteredMuzakki.filter((m: Muzakki) => m.donorType === "Kecil sering").length,
-        ],
-        backgroundColor: ["#4CAF50", "#36A2EB", "#FFCE56", "#FF6384"],
-      },
-    ],
-  };
-
-const pieDataGender = {
-  labels: ["Laki-laki", "Perempuan"],
-  datasets: [
-    {
-      data: [
-        filteredMuzakki.filter((m: Muzakki) => m.gender.toLowerCase() === "laki-laki").length,
-        filteredMuzakki.filter((m: Muzakki) => m.gender.toLowerCase() === "perempuan").length,
-      ],
-      backgroundColor: ["#36A2EB", "#FF6384"],
-    },
-  ],
-};
-
-
   return (
     <main className="p-6">
       <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
-      {/* Filter Section */}
-      <div className="flex flex-wrap gap-4 mb-6">
-        {["Gender", "Donation Type", "Donor Type", "Year"].map((filter, index) => (
-          <div key={index} className="flex flex-col">
-            <label className="text-sm font-medium">{filter}</label>
-            <select
-              className="border p-2 rounded-md"
-              onChange={(e) =>
-                handleFilterChange(
-                  filter.toLowerCase().replace(" ", "") as keyof typeof selectedFilters,
-                  e.target.value
-                )
-              }
-            >
-              <option value="Semua">Semua</option>
-              {/* Map options here dynamically */}
-            </select>
-          </div>
-        ))}
-      </div>
-
-      {/* Total Muzakki */}
+      <FilterSection filterOptions={filterOptions} selectedFilters={selectedFilters} handleFilterChange={handleFilterChange} />
       <div className="mb-6 p-4 bg-white rounded shadow">
         <h2 className="text-lg font-medium">Total Muzakki</h2>
-        <p className="text-2xl font-bold text-orange-500">{totalMuzakki}</p>
+        <p className="text-2xl font-bold text-orange-500">{filteredMuzakki.length}</p>
       </div>
-
-      {/* Charts */}
-      <div className="grid grid-cols-2 gap-4">
-        <div className="bg-white p-4 rounded shadow">
-          <h2 className="text-lg font-medium mb-2">Distribusi Jenis Kelamin</h2>
-          <Pie data={pieDataGender} />
-        </div>
-        <div className="bg-white p-4 rounded shadow">
-          <h2 className="text-lg font-medium mb-2">Distribusi Jenis Donasi</h2>
-          <Bar data={barDataDonationType} />
-        </div>
-        <div className="bg-white p-4 rounded shadow col-span-2">
-          <h2 className="text-lg font-medium mb-2">Distribusi Jenis Donatur</h2>
-          <Bar data={barDataDonorType} />
-        </div>
-      </div>
+      <ChartSection filteredMuzakki={filteredMuzakki} />
     </main>
   );
 }
