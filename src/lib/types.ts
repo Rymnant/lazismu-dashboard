@@ -7,7 +7,7 @@ export type SidebarItem = {
 export type LoyaltyBadge = {
   type: 'Sporadic' | 'Regular' | 'Generous' | 'Major'
   count: number
-  color: string
+  image: string
 }
 
 export type Muzakki = {

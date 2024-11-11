@@ -55,10 +55,10 @@ export const sidebarItems: SidebarItem[] = [
 ]
 
 export const loyaltyBadges: LoyaltyBadge[] = [
-  { type: 'Sporadic', count: 727, color: 'bg-green-500' },
-  { type: 'Regular', count: 314, color: 'bg-blue-500' },
-  { type: 'Generous', count: 314, color: 'bg-yellow-500' },
-  { type: 'Major', count: 175, color: 'bg-red-500' },
+  { type: 'Sporadic', count: 727, image: '/icon/sporadic.svg' },
+  { type: 'Regular', count: 314, image: '/icon/regular.svg' },
+  { type: 'Generous', count: 314, image: '/icon/generous.svg' },
+  { type: 'Major', count: 175, image: '/icon/regular.svg' },
 ]
 
 export const years = [2021, 2022];

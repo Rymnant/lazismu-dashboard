@@ -26,7 +26,7 @@ const FilterSection = ({ filterOptions, selectedFilters, handleFilterChange }: F
     {Object.keys(filterOptions).map((filter, index) => {
       const typedFilter = filter as keyof SelectedFilters;
       return (
-        <div key={index} className="flex flex-col">
+        <div key={index} className="flex flex-col gap-2">
           <label className="text-sm font-medium">{filter.charAt(0).toUpperCase() + filter.slice(1)}</label>
           <select
             className="border p-2 rounded-md"
@@ -129,9 +129,9 @@ export default function DashboardPage() {
 
   return (
     <main className="p-6">
-      <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
+      <h1 className="text-3xl font-semibold mb-6">Dashboard</h1>
       <FilterSection filterOptions={filterOptions} selectedFilters={selectedFilters} handleFilterChange={handleFilterChange} />
-      <div className="mb-6 p-4 bg-white rounded shadow">
+      <div className="flex flex-col items-center bg-white my-5 rounded shadow">
         <h2 className="text-lg font-medium">Total Muzakki</h2>
         <p className="text-2xl font-bold text-orange-500">{filteredMuzakki.length}</p>
       </div>
