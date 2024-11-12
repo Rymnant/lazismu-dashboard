@@ -61,7 +61,7 @@ export default function MaintenancePage() {
       </div>
 
       <div className="flex items-center gap-4 mb-6">
-        <Button className="bg-gray-100 hover:bg-gray-200 text-gray-900 gap-2" onClick={handleSendWA}>
+        <Button className="bg-white shadow hover:bg-gray-200 text-gray-900 gap-2" onClick={handleSendWA}>
           Kirim WA Otomatis
         </Button>
         <Button variant="outline" className="gap-2">

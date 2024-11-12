@@ -1,7 +1,9 @@
 export type SidebarItem = {
   name: string
   icon: string
+  activeIcon: string
   href: string
+  isActive?: boolean
 }
 
 export type LoyaltyBadge = {

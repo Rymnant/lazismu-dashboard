@@ -3,8 +3,9 @@
 import { useState, useMemo } from "react";
 import { Bar, Pie } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, BarElement, CategoryScale, LinearScale, Title, Tooltip, Legend } from "chart.js";
-import { muzakkiData, donorTypes, years } from "../../lib/constants";
-import { Muzakki } from "../../lib/types";
+import Notifications from "@/components/common/Notifications";
+import { muzakkiData, donorTypes, year } from "@/lib/constants";
+import { Muzakki } from "@/lib/types";
 
 ChartJS.register(ArcElement, BarElement, CategoryScale, LinearScale, Title, Tooltip, Legend);
 
@@ -27,7 +28,6 @@ const FilterSection = ({ filterOptions, selectedFilters, handleFilterChange }: F
       const typedFilter = filter as keyof SelectedFilters;
       return (
         <div key={index} className="flex flex-col gap-2">
-          <label className="text-sm font-medium">{filter.charAt(0).toUpperCase() + filter.slice(1)}</label>
           <select
             className="border p-2 rounded-md"
             onChange={(e) => handleFilterChange(typedFilter, e.target.value)}
@@ -99,10 +99,10 @@ const ChartSection = ({ filteredMuzakki }: ChartSectionProps) => {
 
 export default function DashboardPage() {
   const [selectedFilters, setSelectedFilters] = useState({
-    gender: "Semua",
-    donationType: "Semua",
-    donorType: "Semua",
-    year: "Semua",
+    gender: "All Genders",
+    donationType: "All Donations",
+    donorType: "All Donors",
+    year: "All Years",
   });
 
   const handleFilterChange = (filterName: keyof typeof selectedFilters, value: string) => {
@@ -110,30 +110,39 @@ export default function DashboardPage() {
   };
 
   const filterOptions = {
-    gender: ["Semua", "Laki-laki", "Perempuan"],
-    donationType: ["Semua", "DSKL", "Infaq", "Zakat"],
-    donorType: ["Semua", ...donorTypes],
-    year: ["Semua", ...years.map(String)],
+    gender: ["All Genders", "Laki-laki", "Perempuan"],
+    donationType: ["All Donations", "DSKL", "Infaq", "Zakat"],
+    donorType: ["All Donors", ...donorTypes],
+    year: ["All Years", ...year.map(String)],
   };
 
   const filteredMuzakki = useMemo(() => {
     return muzakkiData.filter((m) => {
       return (
-        (selectedFilters.gender === "Semua" || m.gender === selectedFilters.gender) &&
-        (selectedFilters.donationType === "Semua" || m.donationType === selectedFilters.donationType) &&
-        (selectedFilters.donorType === "Semua" || m.donorType === selectedFilters.donorType) &&
-        (selectedFilters.year === "Semua" || m.year === parseInt(selectedFilters.year))
+        (selectedFilters.gender === "All Genders" || m.gender === selectedFilters.gender) &&
+        (selectedFilters.donationType === "All Donations" || m.donationType === selectedFilters.donationType) &&
+        (selectedFilters.donorType === "All Donors" || m.donorType === selectedFilters.donorType) &&
+        (selectedFilters.year === "All Years" || m.year === parseInt(selectedFilters.year))
       );
     });
   }, [selectedFilters]);
 
   return (
     <main className="p-6">
-      <h1 className="text-3xl font-semibold mb-6">Dashboard</h1>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-semibold">Dashboard</h1>
+        <Notifications />
+      </div>
       <FilterSection filterOptions={filterOptions} selectedFilters={selectedFilters} handleFilterChange={handleFilterChange} />
-      <div className="flex flex-col items-center bg-white my-5 rounded shadow">
-        <h2 className="text-lg font-medium">Total Muzakki</h2>
-        <p className="text-2xl font-bold text-orange-500">{filteredMuzakki.length}</p>
+      <div className="max-w-64 overflow-hidden rounded-xl bg-white shadow my-5">
+        <div className="flex items-center justify-between">
+          <div className="p-4">
+            <h2 className="font-bold text-gray-900">Total Muzakki</h2>
+          </div>
+          <div className="bg-[#FF5722] p-4">
+            <span className="font-bold text-white">{filteredMuzakki.length}</span>
+          </div>
+        </div>
       </div>
       <ChartSection filteredMuzakki={filteredMuzakki} />
     </main>
