@@ -46,11 +46,40 @@ export default function MaintenancePage() {
     )
   }
 
-  const handleSendWA = () => {
-    toast({
-      title: "WhatsApp Sent",
-      description: `Sent to ${selectedMuzakki.length} muzakki(s)`,
-    })
+  const handleSendWA = async () => {
+    const selectedPhoneNumbers = paginatedMuzakki
+      .filter(m => selectedMuzakki.includes(m.id))
+      .map(m => m.phoneNumber);
+
+    try {
+      const response = await fetch('/api/send-wa', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          phoneNumbers: selectedPhoneNumbers,
+          message: 'This is a test message from MaintenancePage',
+        }),
+      });
+
+      if (response.ok) {
+        toast({
+          title: "WhatsApp Sent",
+          description: `Sent to ${selectedMuzakki.length} muzakki(s)`,
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: "Failed to send WhatsApp messages",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "An error occurred while sending WhatsApp messages",
+      });
+    }
   }
 
   return (
