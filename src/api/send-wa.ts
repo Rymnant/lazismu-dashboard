@@ -1,4 +1,3 @@
-// src/api/send-wa.ts
 import { NextApiRequest, NextApiResponse } from 'next';
 import twilio from 'twilio';
 
