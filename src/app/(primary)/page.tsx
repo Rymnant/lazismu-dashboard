@@ -99,10 +99,10 @@ const ChartSection = ({ filteredMuzakki }: ChartSectionProps) => {
 
 export default function DashboardPage() {
   const [selectedFilters, setSelectedFilters] = useState({
-    gender: "All Genders",
-    donationType: "All Donations",
-    donorType: "All Donors",
-    year: "All Years",
+    gender: "Jenis Kelamin",
+    donationType: "Jenis Donasi",
+    donorType: "Golongan Muzakki",
+    year: "Tahun",
   });
 
   const handleFilterChange = (filterName: keyof typeof selectedFilters, value: string) => {
@@ -110,19 +110,19 @@ export default function DashboardPage() {
   };
 
   const filterOptions = {
-    gender: ["All Genders", "Laki-laki", "Perempuan"],
-    donationType: ["All Donations", "DSKL", "Infaq", "Zakat"],
-    donorType: ["All Donors", ...donorTypes],
-    year: ["All Years", ...year.map(String)],
+    gender: ["Jenis Kelamin", "Laki-laki", "Perempuan"],
+    donationType: ["Jenis Donasi", "DSKL", "Infaq", "Zakat"],
+    donorType: ["Golongan Muzakki", ...donorTypes],
+    year: ["Tahun", ...year.map(String)],
   };
 
   const filteredMuzakki = useMemo(() => {
     return muzakkiData.filter((m) => {
       return (
-        (selectedFilters.gender === "All Genders" || m.gender === selectedFilters.gender) &&
-        (selectedFilters.donationType === "All Donations" || m.donationType === selectedFilters.donationType) &&
-        (selectedFilters.donorType === "All Donors" || m.donorType === selectedFilters.donorType) &&
-        (selectedFilters.year === "All Years" || m.year === parseInt(selectedFilters.year))
+        (selectedFilters.gender === "Jenis Kelamin" || m.gender === selectedFilters.gender) &&
+        (selectedFilters.donationType === "Jenis Donasi" || m.donationType === selectedFilters.donationType) &&
+        (selectedFilters.donorType === "Golongan Muzakki" || m.donorType === selectedFilters.donorType) &&
+        (selectedFilters.year === "Tahun" || m.year === parseInt(selectedFilters.year))
       );
     });
   }, [selectedFilters]);
