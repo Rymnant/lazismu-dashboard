@@ -22,7 +22,7 @@ type FilterSectionProps = {
   handleFilterChange: (filterName: keyof SelectedFilters, value: string) => void;
 };
 
-const FilterSection = ({ filterOptions, selectedFilters, handleFilterChange }: FilterSectionProps) => (
+const FilterSection = ({ filterOptions, handleFilterChange }: FilterSectionProps) => (
   <div className="flex flex-wrap gap-4 mb-6">
     {Object.keys(filterOptions).map((filter, index) => {
       const typedFilter = filter as keyof SelectedFilters;
