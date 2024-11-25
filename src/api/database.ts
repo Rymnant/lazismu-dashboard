@@ -1,17 +1,24 @@
-export default async function getMuzzaki()
-{
+export async function getMuzakki() {
     try {
-        console.log('1')
-        const res = await fetch('http://192.168.1.3:3000/api/muzzaki');
-        console.log('2')
-        if (!res.ok) {
-            throw new Error('Failed to fetch muzzaki data');
-        }
-
-        console.log('3')
+        // Ganti nek wes di deploy
+        const res = await fetch('http://192.168.1.6:500/api/muzzaki');
+        if (!res.ok) throw new Error('Failed to fetch muzzaki data');
         const data = await res.json();
         return data.data;
     } catch (err) {
+        console.error(err);
+        return [];
+    }
+}
+
+export async function getJurnal() {
+    try {
+        const res = await fetch('http://192.168.1.6:500/api/jurnal');
+        if (!res.ok) throw new Error('Failed to fetch jurnal data');
+        const data = await res.json();
+        return data.data;
+    }
+    catch (err) {
         console.error(err);
         return [];
     }

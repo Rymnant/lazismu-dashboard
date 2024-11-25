@@ -9,7 +9,7 @@ import Pagination from '@/components/common/Pagination'
 import Notifications from '@/components/common/Notifications'
 import { loyaltyBadges, ITEMS_PER_PAGE } from '@/lib/constants'
 import { filterMuzakki, paginateMuzakki } from '@/lib/utils'
-import getMuzzaki from '@/api/database'
+import { getMuzakki } from '@/api/database'
 
 export default function DatabasePage() {
   const [searchTerm, setSearchTerm] = useState('')
@@ -17,29 +17,21 @@ export default function DatabasePage() {
   const [muzakkiData, setMuzakkiData] = useState([])
 
   const fetchMuzzakiData = async () => {
-    const data = await getMuzzaki();
-    console.log(data)
-    setMuzakkiData(data);
+    const data = await getMuzakki()
+    setMuzakkiData(data)
   }
 
   useEffect(() => {
     fetchMuzzakiData()
   }, [])
 
-  const filteredMuzakki = useMemo(() => {
-    // console.log('Filtering data:', muzakkiData) // Debugging log
-    return filterMuzakki(muzakkiData, searchTerm)
-  }, [muzakkiData, searchTerm])
+  console.log(muzakkiData)
 
-  const totalPages = useMemo(() => {
-    // console.log('Calculating total pages:', filteredMuzakki.length) // Debugging log
-    return Math.ceil(filteredMuzakki.length / ITEMS_PER_PAGE)
-  }, [filteredMuzakki])
+  const filteredMuzakki = useMemo(() => filterMuzakki(muzakkiData, searchTerm), [muzakkiData, searchTerm])
 
-  const currentEntries = useMemo(() => {
-    // console.log('Paginating data:', filteredMuzakki) // Debugging log
-    return paginateMuzakki(filteredMuzakki, currentPage, ITEMS_PER_PAGE)
-  }, [filteredMuzakki, currentPage])
+  const totalPages = useMemo(() => Math.ceil(filteredMuzakki.length / ITEMS_PER_PAGE), [filteredMuzakki])
+
+  const currentEntries = useMemo(() => paginateMuzakki(filteredMuzakki, currentPage, ITEMS_PER_PAGE), [filteredMuzakki, currentPage])
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value)
@@ -53,7 +45,7 @@ export default function DatabasePage() {
 
   const handleRefresh = async () => {
     await fetchMuzzakiData()
-  };
+  }
 
   return (
     <div className="p-6" style={{color: 'black'}}>

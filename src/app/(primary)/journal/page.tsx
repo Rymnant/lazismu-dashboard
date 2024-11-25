@@ -1,14 +1,16 @@
 'use client'
 
-import React, { useState, useMemo, useCallback } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { PlusIcon, ChevronDownIcon, XCircleIcon } from '@heroicons/react/24/outline'
 import SearchBar from '@/components/common/SearchBar'
 import JournalTable from '@/components/journal/JournalTable'
 import Pagination from '@/components/common/Pagination'
 import FileUploadModal from '@/components/common/FileUploadModal'
 import Notifications from '@/components/common/Notifications'
-import { journalEntries, ITEMS_PER_PAGE } from '@/lib/constants'
-import { filterJournalEntries, paginateJournalEntries } from '@/lib/utils'
+import { ITEMS_PER_PAGE } from '@/lib/constants'
+import { paginateJournalEntries } from '@/lib/utils'
+import { useFilteredEntries } from '@/components/common/Filter';
+import { getJurnal } from '@/api/database'
 
 export default function JournalPage() {
   const [searchTerm, setSearchTerm] = useState('')
@@ -16,14 +18,17 @@ export default function JournalPage() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [selectedYear, setSelectedYear] = useState<number | null>(null)
   const [selectedMonth, setSelectedMonth] = useState<number | null>(null)
+  const [journalEntries, setJournalEntries] = useState([])
 
-  const filteredEntries = useMemo(() => {
-    return filterJournalEntries(journalEntries, searchTerm).filter((entry) => {
-      const matchesYear = selectedYear ? entry.year === selectedYear : true
-      const matchesMonth = selectedMonth ? entry.month === selectedMonth : true
-      return matchesYear && matchesMonth
-    })
-  }, [selectedYear, selectedMonth, searchTerm])
+  useEffect(() => {
+    async function fetchData() {
+      const data = await getJurnal()
+      setJournalEntries(data)
+    }
+    fetchData()
+  }, [])
+
+  const filteredEntries = useFilteredEntries(journalEntries, searchTerm, selectedYear, selectedMonth);
 
   const totalPages = Math.ceil(filteredEntries.length / ITEMS_PER_PAGE)
   const currentEntries = paginateJournalEntries(filteredEntries, currentPage, ITEMS_PER_PAGE)
@@ -73,12 +78,13 @@ export default function JournalPage() {
               className="appearance-none bg-white border border-gray-300 rounded-md pl-3 pr-10 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-orange-500 focus:border-orange-500"
             >
               <option value="">All Years</option>
-              {Array.from(new Set(journalEntries.map(entry => entry.year))).map(year => (
+              {Array.from(new Set(journalEntries.map(entry => entry.name.match(/\d{4}/)?.[0]))).map(year => (
                 <option key={year} value={year}>{year}</option>
               ))}
             </select>
             <ChevronDownIcon className="absolute right-3 top-2.5 h-5 w-5 text-gray-400" />
           </div>
+
           <div className="relative" style={{ color: 'black' }}>
             <select
               value={selectedMonth || ''}
@@ -94,6 +100,7 @@ export default function JournalPage() {
             </select>
             <ChevronDownIcon className="absolute right-3 top-2.5 h-5 w-5 text-gray-400" />
           </div>
+
           {(selectedYear !== null || selectedMonth !== null) && (
             <button
               onClick={clearFilters}
@@ -104,6 +111,7 @@ export default function JournalPage() {
             </button>
           )}
         </div>
+
         <div className="flex items-center w-full sm:w-auto">
           <SearchBar searchTerm={searchTerm} onSearchChange={handleSearchChange} onClearSearch={clearSearch} />
           <button
@@ -120,8 +128,10 @@ export default function JournalPage() {
           <JournalTable entries={currentEntries} />
         </div>
       </div>
+
       <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
       {isModalOpen && <FileUploadModal onClose={() => setIsModalOpen(false)} />}
+        
     </div>
   )
 }

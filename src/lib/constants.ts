@@ -41,17 +41,6 @@ export const loyaltyBadges: LoyaltyBadge[] = [
   { type: 'Major', count: muzakkiData.filter(m => m.donorType === 'Besar sering').length, image: '/icon/regular.svg' },
 ];
 
-export const journalEntries: JournalEntry[] = Array.from({ length: 100 }, (_, i) => {
-  const date = new Date(2021, 0, 1)
-  date.setMonth(date.getMonth() + i)
-  return {
-    id: i + 1,
-    name: `Jurnal ${date.toLocaleString('default', { month: 'long' })} ${date.getFullYear()}`,
-    year: date.getFullYear(),
-    month: date.getMonth() + 1,
-  }
-})
-
 export const sidebarItems: SidebarItem[] = [
   { name: 'Dashboard', icon: '/icon/dashboard-icon.svg', activeIcon: '/icon/dashboard-icon-active.svg', href: '/', isActive: false },
   { name: 'Jurnal', icon: '/icon/journal-icon.svg', activeIcon: '/icon/journal-icon-active.svg', href: '/journal', isActive: false },
