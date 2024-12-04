@@ -12,6 +12,11 @@ export type LoyaltyBadge = {
   image: string
 }
 
+export type JournalEntry = {
+  id: number;
+  name: string;
+};
+
 export type Muzakki = {
   id: number
   name: string
@@ -23,13 +28,6 @@ export type Muzakki = {
   donorType: string
   status: string
   year: number
-}
-
-export type JournalEntry = {
-  id: number
-  name: string
-  year: number
-  month: number
 }
 
 export type DonorType = 'Momentum' | 'Kecil Jarang' | 'Kecil Sering' | 'Besar Jarang' | 'Besar Sering'

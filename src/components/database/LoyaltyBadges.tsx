@@ -1,4 +1,5 @@
 import { LoyaltyBadge } from '../../lib/types'
+import Image from 'next/image'
 
 type LoyaltyBadgesProps = {
   badges: LoyaltyBadge[]
@@ -12,7 +13,7 @@ export default function LoyaltyBadges({ badges }: LoyaltyBadgesProps) {
         {badges.map((badge) => (
           <div key={badge.type} className="rounded shadow bg-white p-4 grid grid-cols-2 gap-6">
             <div className='flex flex-col items-center'>
-              <img src={badge.image} alt={`${badge.type} badge`} className="w-15 h-15" />
+              <Image src={badge.image} alt={`${badge.type} badge`} width={60} height={60} className="w-15 h-15" />
               <p className="text-sm text-gray-500 mt-3">{badge.type}</p>
             </div>
             <div className='flex flex-col items-center justify-center'>

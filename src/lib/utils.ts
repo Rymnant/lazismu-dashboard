@@ -1,6 +1,7 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 import { Muzakki, JournalEntry } from './types'
+import { useMemo } from 'react'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -31,9 +32,22 @@ export const paginateMuzakki = (muzakkiData: Muzakki[], currentPage: number, ite
 
 // Specific filter and paginate functions for JournalEntry
 export const filterJournalEntries = (journalEntries: JournalEntry[], searchTerm: string): JournalEntry[] => {
-  return filterData(journalEntries, searchTerm, ['name', 'month', 'year'])
+  return filterData(journalEntries, searchTerm, ['name'])
 }
 
 export const paginateJournalEntries = (journalEntries: JournalEntry[], currentPage: number, itemsPerPage: number): JournalEntry[] => {
   return paginateData(journalEntries, currentPage, itemsPerPage)
+}
+
+export function useFilteredEntries(entries: JournalEntry[], searchTerm: string, selectedYear: number | null, selectedMonth: number | null) {
+  return useMemo(() => {
+    return entries.filter((entry) => {
+      const matchesSearch = entry.name.toLowerCase().includes(searchTerm.toLowerCase());
+      const entryYear = entry.name.match(/\d{4}/)?.[0];
+      const entryMonth = new Date(entry.name).getMonth() + 1;
+      const matchesYear = selectedYear ? entryYear === String(selectedYear) : true;
+      const matchesMonth = selectedMonth ? entryMonth === selectedMonth : true;
+      return matchesSearch && matchesYear && matchesMonth;
+    });
+  }, [entries, searchTerm, selectedYear, selectedMonth]);
 }

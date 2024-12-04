@@ -1,4 +1,4 @@
-import { LoyaltyBadge, Muzakki, JournalEntry, SidebarItem } from './types'
+import { LoyaltyBadge, Muzakki, SidebarItem } from './types'
 
 export const ITEMS_PER_PAGE = 7
 

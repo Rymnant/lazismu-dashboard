@@ -6,7 +6,6 @@ import Notifications from '@/components/common/Notifications'
 import { MaintenanceTabs } from '@/components/maintenance/MaitenanceTabs'
 import { MaintenanceTable } from '@/components/maintenance/MaintenanceTable'
 import { muzakkiData, donorTypes, ITEMS_PER_PAGE } from '@/lib/constants'
-import { toast } from "@/hooks/use-toast"
 import SearchBar from '@/components/common/SearchBar'
 import Pagination from '@/components/common/Pagination'
 
@@ -46,42 +45,6 @@ export default function MaintenancePage() {
     )
   }
 
-  const handleSendWA = async () => {
-    const selectedPhoneNumbers = paginatedMuzakki
-      .filter(m => selectedMuzakki.includes(m.id))
-      .map(m => m.phoneNumber);
-
-    try {
-      const response = await fetch('/api/send-wa', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          phoneNumbers: selectedPhoneNumbers,
-          message: 'This is a test message from MaintenancePage',
-        }),
-      });
-
-      if (response.ok) {
-        toast({
-          title: "WhatsApp Sent",
-          description: `Sent to ${selectedMuzakki.length} muzakki(s)`,
-        });
-      } else {
-        toast({
-          title: "Error",
-          description: "Failed to send WhatsApp messages",
-        });
-      }
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "An error occurred while sending WhatsApp messages",
-      });
-    }
-  }
-
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
@@ -90,7 +53,7 @@ export default function MaintenancePage() {
       </div>
 
       <div className="flex items-center gap-4 mb-6">
-        <Button className="bg-white shadow hover:bg-gray-200 text-gray-900 gap-2" onClick={handleSendWA}>
+        <Button className="bg-white shadow hover:bg-gray-200 text-gray-900 gap-2">
           Kirim WA Otomatis
         </Button>
         <Button variant="outline" className="gap-2">

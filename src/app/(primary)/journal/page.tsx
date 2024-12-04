@@ -8,9 +8,9 @@ import Pagination from '@/components/common/Pagination'
 import FileUploadModal from '@/components/common/FileUploadModal'
 import Notifications from '@/components/common/Notifications'
 import { ITEMS_PER_PAGE } from '@/lib/constants'
-import { paginateJournalEntries } from '@/lib/utils'
-import { useFilteredEntries } from '@/components/common/Filter';
+import { paginateJournalEntries, useFilteredEntries } from '@/lib/utils'
 import { getJurnal } from '@/api/database'
+import { JournalEntry } from '@/lib/types';
 
 export default function JournalPage() {
   const [searchTerm, setSearchTerm] = useState('')
@@ -18,7 +18,7 @@ export default function JournalPage() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [selectedYear, setSelectedYear] = useState<number | null>(null)
   const [selectedMonth, setSelectedMonth] = useState<number | null>(null)
-  const [journalEntries, setJournalEntries] = useState([])
+  const [journalEntries, setJournalEntries] = useState<JournalEntry[]>([]);
 
   useEffect(() => {
     async function fetchData() {
