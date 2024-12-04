@@ -9,23 +9,26 @@ type FileUploadModalProps = {
 
 export default function FileUploadModal({ onClose }: FileUploadModalProps) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
+  const [fileName, setFileName] = useState<string>('')
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
       setSelectedFile(event.target.files[0])
+      setFileName(event.target.files[0].name)
     }
   }
 
   const handleImport = () => {
     if (selectedFile) {
       // Logic
-      console.log('Importing file:', selectedFile.name)
+      console.log('Importing file:', fileName)
       onClose()
     }
   }
 
   const handleCancelFileSelection = () => {
     setSelectedFile(null)
+    setFileName('')
   }
 
   return (
@@ -73,6 +76,21 @@ export default function FileUploadModal({ onClose }: FileUploadModalProps) {
               Import
             </button>
           </div>
+          {selectedFile && (
+            <div className="mt-4">
+              <label htmlFor="file-name" className="block text-sm font-medium text-gray-700">
+                File Name
+              </label>
+              <input
+                type="text"
+                id="file-name"
+                name="file-name"
+                value={fileName}
+                onChange={(e) => setFileName(e.target.value)}
+                className="mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+              />
+            </div>
+          )}
         </div>
       </div>
     </div>
