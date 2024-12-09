@@ -42,7 +42,14 @@ export async function uploadJurnal(data: MuzzakiJurnalUploadData): Promise<boole
             body: JSON.stringify(data),
         });
 
-        return res.ok;
+        const res_data = await res.json();
+        console.log(res_data);
+
+        if (res_data.status === 'success') {
+            return true;
+        }
+
+        return false;
     } catch (err) {
         console.error(err);
 
