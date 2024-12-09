@@ -1,4 +1,4 @@
-const API_HOST = 'http://127.0.0.1:3001';
+const API_HOST = '';
 
 export async function getMuzakki() {
     try {
