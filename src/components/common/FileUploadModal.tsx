@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react'
 import { XMarkIcon, ArrowUpTrayIcon } from '@heroicons/react/24/outline'
+import { uploadJurnal, MuzzakiJurnalUploadData } from '@/api/database'
 
 type FileUploadModalProps = {
   onClose: () => void
@@ -20,8 +21,31 @@ export default function FileUploadModal({ onClose }: FileUploadModalProps) {
 
   const handleImport = () => {
     if (selectedFile) {
-      // Logic
-      console.log('Importing file:', fileName)
+
+      // read file and convert to base64
+      const reader = new FileReader()
+      reader.onload = async (e) => {
+        const base64 = e.target?.result
+        if (base64) {
+          const base64_string = base64.toString().split(',')[1]
+
+          const data: MuzzakiJurnalUploadData = {
+            attachment_name: fileName,
+            attachment_base64: base64_string
+          }
+
+          let res = await uploadJurnal(data)
+          if (res) {
+            console.log('Upload success')
+
+            // TODO: refresh database + jurnal
+          } else {
+            console.error('Upload failed')
+          }
+        }
+      }
+
+      reader.readAsDataURL(selectedFile)
       onClose()
     }
   }
