@@ -27,6 +27,20 @@ export async function getJurnal() {
     }
 }
 
+export async function deleteJurnal(id: number) {
+    try {
+        const res = await fetch(API_HOST + '/api/jurnal?id=' + id, {
+            method: 'DELETE',
+        });
+        if (!res.ok) throw new Error('Failed to delete jurnal data');
+        const data = await res.json();
+        return data.status === 'success';
+    } catch (err) {
+        console.error(err);
+        return false;
+    }
+}
+
 export type MuzzakiJurnalUploadData = {
     attachment_name: string;
     attachment_base64: string;

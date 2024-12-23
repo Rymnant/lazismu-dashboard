@@ -1,6 +1,8 @@
 import { Jurnal, JurnalData } from "@/db/db";
 import exceljs from 'exceljs';
 
+/*eslint-disable*/
+
 type JurnalRow = {
     id: number,
     name: string
