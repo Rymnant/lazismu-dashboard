@@ -105,36 +105,43 @@ export async function POST(
         let worksheet = exceldata.worksheets[0];
         let data = worksheet.getSheetValues();
 
-        const expected_header = ['no', 'tanggal', 'tahun', 'zis', 'via', 'sumber dana', 'nama', 'nominal', 'no_hp'];
+        const expected_headers = ['tanggal', 'tahun', 'zis', 'via', 'sumber dana', 'nama', 'donasi', 'no'];
         let is_header_missing = false;
+        let missing_headers: string[] = [];
 
         let header = data[1] as string[];
-        for (let i = 0; i < header.length; i++) {
-            header[i] = header[i].toLowerCase();
+        let header_index: { [key: string]: number } = {};
 
-            if (header[i] != expected_header[i]) {
+        console.log(header)
+
+        // Normalize and map header positions
+        for (let i = 1; i <= header.length; i++) {
+            let header_name = header[i];
+            if (header_name == undefined) {
+                continue;
+            }
+
+            header_name = header_name.toLowerCase().trim();
+            header_index[header_name] = i;
+        }
+
+        // Check for missing headers
+        for (let expected_header of expected_headers) {
+            if (!(expected_header in header_index)) {
                 is_header_missing = true;
-                break;
+                missing_headers.push(expected_header);
             }
         }
 
         if (is_header_missing) {
             return new Response(JSON.stringify({
                 status: 'error',
-                message: 'Invalid excel header'
+                message: 'Invalid excel header, missing: ' + missing_headers.join(', ')
             }), {
                 headers: {
                     'Content-Type': 'application/json'
                 }
             });
-        }
-
-        let header_index: { [key: string]: number } = {};
-        for (let i = 0; i < header.length; i++) {
-            let header_name = header[i].toLowerCase();
-            if (expected_header.includes(header_name)) {
-                header_index[header_name] = i;
-            }
         }
 
         for (let i = 2; i < data.length; i++) {
@@ -148,8 +155,8 @@ export async function POST(
                 via: data_iter[header_index['via']],
                 sumber_dana: data_iter[header_index['sumber dana']],
                 nama: data_iter[header_index['nama']],
-                nominal: data_iter[header_index['nominal']],
-                no_hp: data_iter[header_index['no_hp']]
+                nominal: data_iter[header_index['donasi']],
+                no_hp: data_iter[header_index['no']]
             });
         }
 
@@ -164,6 +171,8 @@ export async function POST(
             }
         });
     } catch (error) {
+        console.log(error);
+
         return new Response(JSON.stringify({
             status: 'error',
             message: 'Failed to upload data'
