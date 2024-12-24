@@ -69,7 +69,8 @@ export async function POST(
     const body = await request.json();
     const { attachment_name, attachment_base64 } = body;
 
-    let buffer = Buffer.from(attachment_base64, 'base64');
+    // convert base64 to buffer
+    let buffer = Buffer.from(attachment_base64, 'base64') as any as ArrayBuffer;
     let exceldata
     try {
         exceldata = new exceljs.Workbook();
@@ -104,21 +105,51 @@ export async function POST(
         let worksheet = exceldata.worksheets[0];
         let data = worksheet.getSheetValues();
 
-        let header = data[1];
+        const expected_header = ['no', 'tanggal', 'tahun', 'zis', 'via', 'sumber dana', 'nama', 'nominal', 'no_hp'];
+        let is_header_missing = false;
+
+        let header = data[1] as string[];
+        for (let i = 0; i < header.length; i++) {
+            header[i] = header[i].toLowerCase();
+
+            if (header[i] != expected_header[i]) {
+                is_header_missing = true;
+                break;
+            }
+        }
+
+        if (is_header_missing) {
+            return new Response(JSON.stringify({
+                status: 'error',
+                message: 'Invalid excel header'
+            }), {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+        }
+
+        let header_index: { [key: string]: number } = {};
+        for (let i = 0; i < header.length; i++) {
+            let header_name = header[i].toLowerCase();
+            if (expected_header.includes(header_name)) {
+                header_index[header_name] = i;
+            }
+        }
 
         for (let i = 2; i < data.length; i++) {
             let data_iter = data[i] as string[];
 
             await JurnalData.create({
                 jurnal_id: res_jurnal.id,
-                tanggal: data_iter[1],
-                tahun: data_iter[2],
-                zis: data_iter[3],
-                via: data_iter[4],
-                sumber_dana: data_iter[5],
-                nama: data_iter[6],
-                nominal: data_iter[7],
-                no_hp: data_iter[8]
+                tanggal: data_iter[header_index['tanggal']],
+                tahun: data_iter[header_index['tahun']],
+                zis: data_iter[header_index['zis']],
+                via: data_iter[header_index['via']],
+                sumber_dana: data_iter[header_index['sumber dana']],
+                nama: data_iter[header_index['nama']],
+                nominal: data_iter[header_index['nominal']],
+                no_hp: data_iter[header_index['no_hp']]
             });
         }
 
@@ -177,9 +208,16 @@ export async function DELETE(
             });
         }
 
+        // delete jurnal, but wtih jurnaldata too
         await Jurnal.destroy({
             where: {
                 id: params_id
+            }
+        });
+
+        await JurnalData.destroy({
+            where: {
+                jurnal_id: params_id
             }
         });
 
