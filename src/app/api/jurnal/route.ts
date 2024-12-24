@@ -160,6 +160,23 @@ export async function DELETE(
     }
 
     try {
+        let is_exist = await Jurnal.findOne({
+            where: {
+                id: params_id
+            }
+        });
+
+        if (!is_exist) {
+            return new Response(JSON.stringify({
+                status: 'error',
+                message: 'Data not found'
+            }), {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+        }
+
         await Jurnal.destroy({
             where: {
                 id: params_id
