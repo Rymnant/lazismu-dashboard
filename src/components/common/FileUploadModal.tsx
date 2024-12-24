@@ -1,5 +1,6 @@
 'use client'
 
+/*eslint-disable*/
 import React, { useState } from 'react'
 import { XMarkIcon, ArrowUpTrayIcon } from '@heroicons/react/24/outline'
 import { uploadJurnal, MuzzakiJurnalUploadData } from '@/api/database'
@@ -70,7 +71,7 @@ export default function FileUploadModal({ onClose }: FileUploadModalProps) {
               id="file-upload"
               name="file-upload"
               type="file"
-              accept=".csv"
+              accept=".xlsx, .xls, .csv"
               className="sr-only"
               onChange={handleFileChange}
             />

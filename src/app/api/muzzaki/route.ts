@@ -27,7 +27,7 @@ export async function GET(
             age: 0,
             occupation: 'Unknown',
             donationType: row.zis,
-            donorType: row.via,
+            donorType: 'Unknown',
             status: 'Aktif',
             year: 2022
         }
