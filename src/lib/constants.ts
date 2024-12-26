@@ -1,4 +1,4 @@
-import { LoyaltyBadge, SidebarItem } from './types'
+import { SidebarItem } from './types'
 
 export const ITEMS_PER_PAGE = 7
 
@@ -8,13 +8,6 @@ export const donationTypes = ['DSKL', 'Infaq', 'Zakat'];
 export const donorTypes = ['Momentum', 'Kecil jarang', 'Besar jarang', 'Kecil sering', 'Besar sering'];
 export const status = ['Aktif', 'Tidak aktif'];
 export const year = [2021, 2022, 2023, 2024];
-
-export const loyaltyBadges: LoyaltyBadge[] = [
-  { type: 'Sporadic', count: 1, image: '/icon/sporadic.svg' },
-  { type: 'Regular', count: 2, image: '/icon/regular.svg' },
-  { type: 'Generous', count: 3, image: '/icon/generous.svg' },
-  { type: 'Major', count: 4, image: '/icon/regular.svg' },
-];
 
 export const sidebarItems: SidebarItem[] = [
   { name: 'Dashboard', icon: '/icon/dashboard-icon.svg', activeIcon: '/icon/dashboard-icon-active.svg', href: '/', isActive: false },

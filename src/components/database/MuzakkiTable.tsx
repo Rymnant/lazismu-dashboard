@@ -2,12 +2,10 @@ import { Muzakki } from '../../lib/types'
 
 type MuzakkiTableProps = {
   muzakkiData: Muzakki[],
-  start_index: number
+  currentPage: number,
 }
 
-export default function MuzakkiTable({ muzakkiData, start_index }: MuzakkiTableProps) {
-  let index = 1;
-
+export default function MuzakkiTable({ muzakkiData, currentPage }: MuzakkiTableProps) {
   return (
     <div className="bg-white shadow overflow-hidden sm:rounded-lg">
       <div className="overflow-x-auto">
@@ -28,7 +26,7 @@ export default function MuzakkiTable({ muzakkiData, start_index }: MuzakkiTableP
           <tbody className="bg-white divide-y divide-gray-200">
             {muzakkiData.map((muzakki, index) => (
               <tr key={index}>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{start_index + index}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{(currentPage - 1) * 7 + index + 1}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{muzakki.name}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{muzakki.phoneNumber}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{muzakki.gender}</td>

@@ -4,15 +4,16 @@ import { deleteJurnal } from '../../api/database'
 
 type JournalTableProps = {
   entries: JournalEntry[],
+  currentPage: number,
   onDeleteSuccess: () => void
 }
 
-export default function JournalTable({ entries, onDeleteSuccess }: JournalTableProps) {
+export default function JournalTable({ entries, currentPage, onDeleteSuccess }: JournalTableProps) {
   const handleDelete = async (id: number) => {
     const success = await deleteJurnal(id);
     if (success) {
       console.log(`Jurnal with id ${id} deleted successfully`);
-      onDeleteSuccess(); // Refresh the table
+      onDeleteSuccess();
     } else {
       console.error(`Failed to delete jurnal with id ${id}`);
     }
@@ -35,9 +36,9 @@ export default function JournalTable({ entries, onDeleteSuccess }: JournalTableP
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-200">
-          {entries.map((entry) => (
-            <tr key={entry.id}>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{entry.id}</td>
+          {entries.map((entry, index) => (
+            <tr key={index}>
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{(currentPage - 1) * 7 + index + 1}</td>
               <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{entry.name}</td>
               <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                 <button

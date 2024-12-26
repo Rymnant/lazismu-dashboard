@@ -6,11 +6,12 @@ type PaginationProps = {
   totalPages: number
   onPageChange: (page: number) => void
   siblingCount?: number
+  totalItems: number
 }
 
 /*eslint-disable*/
 export default function Pagination({
-  currentPage, totalPages, onPageChange = () => { }, siblingCount = 1,
+  currentPage, totalPages, onPageChange = () => { }, siblingCount = 1, totalItems,
 }: PaginationProps) {
   const range = (start: number, end: number) => {
     return Array.from({ length: end - start + 1 }, (_, idx) => start + idx)
@@ -68,8 +69,8 @@ export default function Pagination({
       <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
         <div>
           <p className="text-sm text-gray-700">
-            Showing <span className="font-medium">{(currentPage - 1) * 10 + 1}</span> to <span className="font-medium">{Math.min(currentPage * 10, totalPages * 10)}</span> of{' '}
-            <span className="font-medium">{totalPages * 10}</span> results
+            Showing <span className="font-medium">{(currentPage - 1) * 7 + 1}</span> to <span className="font-medium">{Math.min(currentPage * 10, totalItems)}</span> of{' '}
+            <span className="font-medium">{totalItems}</span> results
           </p>
         </div>
         <div className="overflow-x-auto">
@@ -98,13 +99,10 @@ export default function Pagination({
                 <button
                   key={index}
                   className={cn(
-                    "relative inline-flex items-center px-4 py-2 text-sm font-semibold focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600",
-                    pageNumber === currentPage
-                      ? "z-10 bg-gray-400 rounded-md text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-400"
-                      : "text-gray-900 hover:bg-gray-50 focus:outline-offset-0"
+                    "relative inline-flex items-center rounded-md px-4 py-2 text-sm font-medium ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0",
+                    pageNumber === currentPage ? "bg-gray-200" : "bg-white"
                   )}
-                  onClick={() => onPageChange(pageNumber as number)}
-                  aria-current={pageNumber === currentPage ? 'page' : undefined}
+                  onClick={() => typeof pageNumber === 'number' && onPageChange(pageNumber)}
                 >
                   {pageNumber}
                 </button>

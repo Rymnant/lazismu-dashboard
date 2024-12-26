@@ -72,11 +72,17 @@ export default function JournalPage() {
 
       <div className="bg-white shadow overflow-hidden sm:rounded-lg">
         <div className="overflow-x-auto">
-          <JournalTable entries={currentEntries} onDeleteSuccess={fetchJournalEntries} />
+          <JournalTable entries={currentEntries} currentPage={currentPage} onDeleteSuccess={fetchJournalEntries} />
         </div>
       </div>
 
-      <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+      <Pagination 
+        currentPage={currentPage} 
+        totalPages={totalPages} 
+        onPageChange={setCurrentPage} 
+        totalItems={journalEntries.length}
+      />
+
       {isModalOpen && (
         <FileUploadModal
           isOpen={isModalOpen}

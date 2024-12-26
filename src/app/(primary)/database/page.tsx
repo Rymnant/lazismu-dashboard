@@ -7,7 +7,7 @@ import SearchBar from '@/components/common/SearchBar'
 import MuzakkiTable from '@/components/database/MuzakkiTable'
 import Pagination from '@/components/common/Pagination'
 import Notifications from '@/components/common/Notifications'
-import { loyaltyBadges, ITEMS_PER_PAGE } from '@/lib/constants'
+import { ITEMS_PER_PAGE } from '@/lib/constants'
 import { filterMuzakki, paginateMuzakki } from '@/lib/utils'
 import { getMuzakki } from '@/api/database'
 
@@ -54,7 +54,7 @@ export default function DatabasePage() {
         <Notifications />
       </div>
 
-      <LoyaltyBadges badges={loyaltyBadges} />
+      <LoyaltyBadges muzakkiData={muzakkiData} />
 
       <div className="flex flex-col sm:flex-row justify-between items-center mb-4 space-y-4 sm:space-y-0">
         <button className="flex items-center text-gray-600 hover:text-gray-900" onClick={handleRefresh}>
@@ -68,12 +68,13 @@ export default function DatabasePage() {
         />
       </div>
 
-      <MuzakkiTable muzakkiData={currentEntries} start_index={currentPage} />
+      <MuzakkiTable muzakkiData={currentEntries} currentPage={currentPage} />
 
       <Pagination
         currentPage={currentPage}
         totalPages={totalPages}
         onPageChange={setCurrentPage}
+        totalItems={filteredMuzakki.length}
       />
     </div>
   )
