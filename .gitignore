@@ -13,7 +13,7 @@
 /.next/
 /out/
 
-sqlite3
+*.sqlite3
 
 # production
 /build
