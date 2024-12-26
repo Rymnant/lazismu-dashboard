@@ -1,75 +1,81 @@
 'use client'
 
-/*eslint-disable*/
-import React, { useState } from 'react'
-import { XMarkIcon, ArrowUpTrayIcon } from '@heroicons/react/24/outline'
+import React, { useState, useCallback } from 'react'
+import { ArrowUpTrayIcon } from '@heroicons/react/24/outline'
 import { uploadJurnal, MuzzakiJurnalUploadData } from '@/api/database'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { toast } from '@/hooks/use-toast'
 
 type FileUploadModalProps = {
+  isOpen: boolean
   onClose: () => void
+  onUploadSuccess: () => void
 }
 
-export default function FileUploadModal({ onClose }: FileUploadModalProps) {
+export function FileUploadModal({ isOpen, onClose, onUploadSuccess }: FileUploadModalProps) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [fileName, setFileName] = useState<string>('')
+  const [isUploading, setIsUploading] = useState(false)
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files[0]) {
-      setSelectedFile(event.target.files[0])
-      setFileName(event.target.files[0].name)
+  const handleFileChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (file) {
+      setSelectedFile(file)
+      setFileName(file.name)
     }
-  }
+  }, [])
 
-  const handleImport = () => {
-    if (selectedFile) {
+  const handleImport = useCallback(async () => {
+    if (!selectedFile) return
 
-      // read file and convert to base64
-      const reader = new FileReader()
-      reader.onload = async (e) => {
-        const base64 = e.target?.result
-        if (base64) {
-          const base64_string = base64.toString().split(',')[1]
-
-          const data: MuzzakiJurnalUploadData = {
-            attachment_name: fileName,
-            attachment_base64: base64_string
-          }
-
-          let res = await uploadJurnal(data)
-          if (res) {
-            console.log('Upload success')
-
-            // TODO: refresh database + jurnal
-          } else {
-            console.error('Upload failed')
-          }
-        }
+    setIsUploading(true)
+    try {
+      const base64String = await fileToBase64(selectedFile)
+      const data: MuzzakiJurnalUploadData = {
+        attachment_name: fileName,
+        attachment_base64: base64String,
       }
 
-      reader.readAsDataURL(selectedFile)
-      onClose()
+      const res = await uploadJurnal(data)
+      if (res) {
+        toast({
+          title: 'Upload successful',
+          description: 'Your file has been uploaded successfully.',
+        })
+        onUploadSuccess()
+        onClose()
+      } else {
+        throw new Error('Upload failed')
+      }
+    } catch (error) {
+      console.error('Upload failed:', error)
+      toast({
+        title: 'Upload failed',
+        description: 'There was an error uploading your file. Please try again.',
+        variant: 'destructive',
+      })
+    } finally {
+      setIsUploading(false)
     }
-  }
+  }, [selectedFile, fileName, onClose, onUploadSuccess])
 
-  const handleCancelFileSelection = () => {
+  const handleCancelFileSelection = useCallback(() => {
     setSelectedFile(null)
     setFileName('')
-  }
+  }, [])
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 w-full max-w-md">
-        <div className="flex justify-between items-center mb-4" style={{ color: 'black' }}>
-          <h2 className="text-xl font-semibold">Upload File</h2>
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
-            <XMarkIcon className="h-6 w-6" />
-          </button>
-        </div>
-        <div className="mb-4">
-          <div className="mt-1 flex justify-between items-center">
-            <input
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="sm:max-w-md mx-auto w-[calc(100%-2rem)] sm:w-full rounded">
+        <DialogHeader>
+          <DialogTitle>Upload File</DialogTitle>
+        </DialogHeader>
+        <div className="grid gap-4 py-4 px-2 sm:px-4">
+          <div className="flex items-center gap-4">
+            <Input
               id="file-upload"
-              name="file-upload"
               type="file"
               accept=".xlsx, .xls, .csv"
               className="sr-only"
@@ -77,47 +83,60 @@ export default function FileUploadModal({ onClose }: FileUploadModalProps) {
             />
             <label
               htmlFor="file-upload"
-              className="relative cursor-pointer bg-white rounded-md font-medium text-gray-500 hover:text-orange-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-orange-500"
+              className="flex items-center gap-2 cursor-pointer text-sm font-medium text-primary hover:underline"
             >
-              <span className="flex items-center space-x-4 mb-4 mt-4">
-                <ArrowUpTrayIcon className="h-6 w-6" />
-                <p>{selectedFile ? selectedFile.name : 'Pilih file'}</p>
-              </span>
+              <ArrowUpTrayIcon className="h-4 w-4" />
+              {selectedFile ? selectedFile.name : 'Choose file'}
             </label>
             {selectedFile && (
-              <button
-                type="button"
+              <Button
+                variant="outline"
+                size="sm"
                 onClick={handleCancelFileSelection}
-                className="ml-1 inline-flex items-center px-2.5 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
               >
                 Cancel
-              </button>
+              </Button>
             )}
-            <button
-              type="button"
-              onClick={handleImport}
-              className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
-            >
-              Import
-            </button>
           </div>
           {selectedFile && (
-            <div className="mt-4">
-              <label htmlFor="file-name" className="block text-sm font-medium text-gray-700">
-                File Name
-              </label>
-              <input
-                type="text"
-                id="file-name"
-                name="file-name"
-                value={fileName}
-                onChange={(e) => setFileName(e.target.value)}
-                className="mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-              />
-            </div>
+            <Input
+              type="text"
+              id="file-name"
+              value={fileName}
+              onChange={(e) => setFileName(e.target.value)}
+              placeholder="File name"
+            />
           )}
         </div>
-      </div>
-    </div>
+        <div className="flex flex-col sm:flex-row justify-end gap-4 mt-4">
+          <Button variant="outline" onClick={onClose} className="w-full sm:w-auto">
+            Cancel
+          </Button>
+          <Button 
+            onClick={handleImport} 
+            disabled={!selectedFile || isUploading}
+            className="w-full sm:w-auto"
+          >
+            {isUploading ? 'Uploading...' : 'Import'}
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
   )
 }
+
+async function fileToBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = () => {
+      const result = reader.result as string
+      const base64String = result.split(',')[1]
+      resolve(base64String)
+    }
+    reader.onerror = reject
+    reader.readAsDataURL(file)
+  })
+}
+
+export default FileUploadModal;
+

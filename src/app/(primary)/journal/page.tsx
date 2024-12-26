@@ -77,7 +77,13 @@ export default function JournalPage() {
       </div>
 
       <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
-      {isModalOpen && <FileUploadModal onClose={() => setIsModalOpen(false)} />}
+      {isModalOpen && (
+        <FileUploadModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onUploadSuccess={fetchJournalEntries}
+        />
+      )}
     </div>
   )
 }
