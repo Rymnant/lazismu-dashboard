@@ -5,7 +5,9 @@ type JurnalDataRow = {
     nama: string,
     no_hp: string,
     zis: string,
-    via: string
+    via: string,
+    tahun: number,
+    jenis_donatur: string
 }
 
 export async function GET(
@@ -27,9 +29,9 @@ export async function GET(
             age: 0,
             occupation: 'Unknown',
             donationType: row.zis,
-            donorType: 'Unknown',
+            donorType: row.jenis_donatur,
             status: 'Aktif',
-            year: 2022
+            year: row.tahun,
         }
 
         actual_data.push(data);

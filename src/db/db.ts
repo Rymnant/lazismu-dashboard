@@ -63,6 +63,10 @@ export const JurnalData = Database.define('JurnalData', {
     nominal: {
         type: Sequelize.FLOAT,
         allowNull: false
+    },
+    jenis_donatur: {
+        type: Sequelize.STRING,
+        allowNull: false
     }
 });
 

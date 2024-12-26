@@ -48,7 +48,7 @@ export default function DatabasePage() {
   }
 
   return (
-    <div className="p-6" style={{color: 'black'}}>
+    <div className="p-6" style={{ color: 'black' }}>
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-semibold">Database Muzakki</h1>
         <Notifications />
@@ -68,7 +68,7 @@ export default function DatabasePage() {
         />
       </div>
 
-      <MuzakkiTable muzakkiData={currentEntries} />
+      <MuzakkiTable muzakkiData={currentEntries} start_index={currentPage} />
 
       <Pagination
         currentPage={currentPage}

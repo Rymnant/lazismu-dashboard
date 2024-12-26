@@ -1,19 +1,12 @@
-import { Jurnal, JurnalData } from "@/db/db";
+import { Database, Jurnal, JurnalData } from "@/db/db";
 import exceljs from 'exceljs';
+import { DonationClassifier, KeyValue } from "./classifikasi";
 
 /*eslint-disable*/
 
 type JurnalRow = {
     id: number,
     name: string
-}
-
-type JurnalDataRow = {
-    id: number,
-    nama: string,
-    no_hp: string,
-    zis: string,
-    via: string
 }
 
 export async function GET(
@@ -112,8 +105,6 @@ export async function POST(
         let header = data[1] as string[];
         let header_index: { [key: string]: number } = {};
 
-        console.log(header)
-
         // Normalize and map header positions
         for (let i = 1; i <= header.length; i++) {
             let header_name = header[i];
@@ -144,19 +135,46 @@ export async function POST(
             });
         }
 
+        let row_data: KeyValue[] = [];
         for (let i = 2; i < data.length; i++) {
             let data_iter = data[i] as string[];
 
+            let tahun = parseInt(data_iter[header_index['tahun']]);
+            let nominal = parseInt(data_iter[header_index['donasi']]);
+
+            let row: KeyValue = {
+                ['nama']: data_iter[header_index['nama']].trim(),
+                ['no_hp']: data_iter[header_index['no']],
+                ['tanggal']: data_iter[header_index['tanggal']],
+                ['tahun']: tahun,
+                ['zis']: data_iter[header_index['zis']].trim(),
+                ['via']: data_iter[header_index['via']].trim(),
+                ['sumber_dana']: data_iter[header_index['sumber dana']].trim(),
+                ['nominal']: nominal
+            };
+
+            row_data.push(row)
+        }
+
+        let classifier = new DonationClassifier();
+        let classified_data = classifier.classify(row_data);
+
+        console.log(classified_data);
+
+        // Insert to database
+        for (let i = 0; i < classified_data.length; i++) {
+            let row = classified_data[i];
             await JurnalData.create({
                 jurnal_id: res_jurnal.id,
-                tanggal: data_iter[header_index['tanggal']],
-                tahun: data_iter[header_index['tahun']],
-                zis: data_iter[header_index['zis']],
-                via: data_iter[header_index['via']],
-                sumber_dana: data_iter[header_index['sumber dana']],
-                nama: data_iter[header_index['nama']],
-                nominal: data_iter[header_index['donasi']],
-                no_hp: data_iter[header_index['no']]
+                nama: row['nama'],
+                no_hp: row['no_hp'],
+                tanggal: row['tanggal'],
+                tahun: row['tahun'],
+                zis: row['zis'],
+                via: row['via'],
+                sumber_dana: row['sumber_dana'],
+                nominal: row['nominal'],
+                jenis_donatur: row['jenis_donatur']
             });
         }
 
@@ -193,6 +211,7 @@ export async function DELETE(
             status: 'error',
             message: 'Invalid parameter'
         }), {
+            status: 400,
             headers: {
                 'Content-Type': 'application/json'
             }
@@ -238,10 +257,13 @@ export async function DELETE(
             }
         });
     } catch (error) {
+        console.error(error)
+
         return new Response(JSON.stringify({
             status: 'error',
             message: 'Failed to delete data'
         }), {
+            status: 500,
             headers: {
                 'Content-Type': 'application/json'
             }
