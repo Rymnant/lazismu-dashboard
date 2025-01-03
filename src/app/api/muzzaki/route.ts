@@ -1,27 +1,16 @@
-import { Jurnal, JurnalData } from "@/db/db";
+import { JurnalData } from "@/db/db";
+import { JurnalDataRow } from "@/lib/types";
 
-type JurnalDataRow = {
-    id: number,
-    nama: string,
-    no_hp: string,
-    zis: string,
-    via: string,
-    tahun: number,
-    jenis_donatur: string
-}
-
-export async function GET(
-    request: Request,
-) {
+export async function GET() {
     await JurnalData.sync();
 
-    let sql_res = await JurnalData.findAll();
-    let actual_data = [];
+    const sql_res = await JurnalData.findAll();
+    const actual_data = [];
 
     for (let i = 0; i < sql_res.length; i++) {
-        let row = sql_res[i].get() as JurnalDataRow;
+        const row = sql_res[i].get() as JurnalDataRow;
 
-        let data = {
+        const data = {
             id: row.id,
             name: row.nama,
             phoneNumber: row.no_hp,

@@ -1,10 +1,6 @@
+import React from 'react'
 import { MagnifyingGlassIcon, XCircleIcon } from '@heroicons/react/24/outline'
-
-type SearchBarProps = {
-  searchTerm: string
-  onSearchChange: (e: React.ChangeEvent<HTMLInputElement>) => void
-  onClearSearch: () => void
-}
+import { SearchBarProps } from '@/lib/types'
 
 export default function SearchBar({ searchTerm, onSearchChange, onClearSearch }: SearchBarProps) {
   return (

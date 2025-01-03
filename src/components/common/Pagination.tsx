@@ -1,15 +1,8 @@
+import React from 'react'
 import { ChevronLeft, ChevronRight, MoreHorizontal } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { PaginationProps } from '@/lib/types'
 
-type PaginationProps = {
-  currentPage: number
-  totalPages: number
-  onPageChange: (page: number) => void
-  siblingCount?: number
-  totalItems: number
-}
-
-/*eslint-disable*/
 export default function Pagination({
   currentPage, totalPages, onPageChange = () => { }, siblingCount = 1, totalItems,
 }: PaginationProps) {

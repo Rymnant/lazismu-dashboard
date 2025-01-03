@@ -1,3 +1,4 @@
+import React from 'react';
 import { BellIcon } from '@heroicons/react/20/solid';
 
 export default function Notifications() {

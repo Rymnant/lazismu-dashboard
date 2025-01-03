@@ -1,12 +1,7 @@
+import React from 'react'
 import { TrashIcon } from '@heroicons/react/24/outline'
-import { JournalEntry } from '../../lib/types'
-import { deleteJurnal } from '../../api/database'
-
-type JournalTableProps = {
-  entries: JournalEntry[],
-  currentPage: number,
-  onDeleteSuccess: () => void
-}
+import { JournalTableProps } from '@/lib/types'
+import { deleteJurnal } from '@/api/database'
 
 export default function JournalTable({ entries, currentPage, onDeleteSuccess }: JournalTableProps) {
   const handleDelete = async (id: number) => {

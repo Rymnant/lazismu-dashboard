@@ -1,5 +1,4 @@
 import Sequelize from 'sequelize';
-import Sqlite3 from 'sqlite3';
 
 export const Database = new Sequelize.Sequelize({
     dialect: 'sqlite',

@@ -1,3 +1,5 @@
+import React from 'react';
+
 export default function HistoryTransaksiPage() {
     return (
       <main className="p-6">

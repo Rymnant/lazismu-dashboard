@@ -1,12 +1,6 @@
 import React, { useMemo } from 'react'
 import { ChevronDownIcon } from '@heroicons/react/24/outline'
-import { JournalEntry } from '@/lib/types'
-
-type YearFilterProps = {
-  selectedYear: number | null
-  handleYearChange: (e: React.ChangeEvent<HTMLSelectElement>) => void
-  journalEntries: JournalEntry[]
-}
+import { YearFilterProps } from '@/lib/types'
 
 const YearFilter: React.FC<YearFilterProps> = ({ selectedYear, handleYearChange, journalEntries }) => {
   const yearOptions = useMemo(() => {

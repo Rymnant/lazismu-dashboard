@@ -1,13 +1,8 @@
-import { Database, Jurnal, JurnalData } from "@/db/db";
-import exceljs from 'exceljs';
+import { Jurnal, JurnalData } from "@/db/db";
+import * as exceljs from 'exceljs';
+import { Buffer } from 'buffer';
 import { DonationClassifier, KeyValue } from "./classifikasi";
-
-/*eslint-disable*/
-
-type JurnalRow = {
-    id: number,
-    name: string
-}
+import { JurnalRow } from "@/lib/types";
 
 export async function GET(
     request: Request,
@@ -32,7 +27,8 @@ export async function GET(
         }
     }
     else {
-        res_jurnal = await Jurnal.findAll() as any as JurnalRow[];
+        const jurnalData = await Jurnal.findAll();
+        res_jurnal = jurnalData.map(j => j.get()) as JurnalRow[];
     }
 
     if (res_jurnal == null) {
@@ -61,14 +57,14 @@ export async function POST(
 ) {
     const body = await request.json();
     const { attachment_name, attachment_base64 } = body;
+    let exceldata;
 
-    // convert base64 to buffer
-    let buffer = Buffer.from(attachment_base64, 'base64') as any as ArrayBuffer;
-    let exceldata
     try {
         exceldata = new exceljs.Workbook();
-        await exceldata.xlsx.load(buffer);
-    } catch (error) {
+        const buffer = Buffer.from(attachment_base64, 'base64');
+        const arrayBuffer = buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength);
+        await exceldata.xlsx.load(arrayBuffer);
+    } catch {
         return new Response(JSON.stringify({
             status: 'error',
             message: 'Invalid excel file'
@@ -91,19 +87,19 @@ export async function POST(
     }
 
     try {
-        let res_jurnal = await Jurnal.create({
+        const res_jurnal = await Jurnal.create({
             'name': attachment_name
-        }) as any as JurnalRow;
+        }) as unknown as JurnalRow;
 
-        let worksheet = exceldata.worksheets[0];
-        let data = worksheet.getSheetValues();
+        const worksheet = exceldata.worksheets[0];
+        const data = worksheet.getSheetValues();
 
         const expected_headers = ['tanggal', 'tahun', 'zis', 'via', 'sumber dana', 'nama', 'donasi', 'no'];
         let is_header_missing = false;
-        let missing_headers: string[] = [];
+        const missing_headers: string[] = [];
 
-        let header = data[1] as string[];
-        let header_index: { [key: string]: number } = {};
+        const header = data[1] as string[];
+        const header_index: { [key: string]: number } = {};
 
         // Normalize and map header positions
         for (let i = 1; i <= header.length; i++) {
@@ -117,7 +113,7 @@ export async function POST(
         }
 
         // Check for missing headers
-        for (let expected_header of expected_headers) {
+        for (const expected_header of expected_headers) {
             if (!(expected_header in header_index)) {
                 is_header_missing = true;
                 missing_headers.push(expected_header);
@@ -135,14 +131,14 @@ export async function POST(
             });
         }
 
-        let row_data: KeyValue[] = [];
+        const row_data: KeyValue[] = [];
         for (let i = 2; i < data.length; i++) {
-            let data_iter = data[i] as string[];
+            const data_iter = data[i] as string[];
 
-            let tahun = parseInt(data_iter[header_index['tahun']]);
-            let nominal = parseInt(data_iter[header_index['donasi']]);
+            const tahun = parseInt(data_iter[header_index['tahun']]);
+            const nominal = parseInt(data_iter[header_index['donasi']]);
 
-            let row: KeyValue = {
+            const row: KeyValue = {
                 ['nama']: data_iter[header_index['nama']].trim(),
                 ['no_hp']: data_iter[header_index['no']],
                 ['tanggal']: data_iter[header_index['tanggal']],
@@ -156,14 +152,14 @@ export async function POST(
             row_data.push(row)
         }
 
-        let classifier = new DonationClassifier();
-        let classified_data = classifier.classify(row_data);
+        const classifier = new DonationClassifier();
+        const classified_data = classifier.classify(row_data);
 
         console.log(classified_data);
 
         // Insert to database
         for (let i = 0; i < classified_data.length; i++) {
-            let row = classified_data[i];
+            const row = classified_data[i];
             await JurnalData.create({
                 jurnal_id: res_jurnal.id,
                 nama: row['nama'],
@@ -219,7 +215,7 @@ export async function DELETE(
     }
 
     try {
-        let is_exist = await Jurnal.findOne({
+        const is_exist = await Jurnal.findOne({
             where: {
                 id: params_id
             }

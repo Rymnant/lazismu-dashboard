@@ -1,4 +1,5 @@
-import { Muzakki } from '../../lib/types'
+import React from 'react'
+import { Muzakki } from '@/lib/types'
 
 type MuzakkiTableProps = {
   muzakkiData: Muzakki[],

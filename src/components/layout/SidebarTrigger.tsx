@@ -1,7 +1,6 @@
 'use client'
 
-/*eslint-disable*/
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { ChevronRight } from 'lucide-react'
 
 interface SidebarTriggerProps {
@@ -26,7 +25,6 @@ const SidebarTrigger: React.FC<SidebarTriggerProps> = ({ isOpen, setIsOpen }) =>
   const onTouchEnd = () => {
     if (!touchStart || !touchEnd) return
     const distance = touchStart - touchEnd
-    const isLeftSwipe = distance > minSwipeDistance
     const isRightSwipe = distance < -minSwipeDistance
     if (isRightSwipe && !isOpen) {
       setIsOpen(true)

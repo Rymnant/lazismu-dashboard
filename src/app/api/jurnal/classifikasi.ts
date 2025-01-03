@@ -4,19 +4,19 @@
  */
 
 export type KeyValue = {
-    [key: string]: any;
+    [key: string]: string | number | boolean | null;
 }
 
 export class DonationClassifier {
     preprocess_data(input: KeyValue[]) {
         const column_must_not_null = ['nama', 'zis', 'nominal', 'tanggal'];
-        let data = [];
+        const data = [];
         for (let i = 0; i < input.length; i++) {
-            let row = input[i];
+            const row = input[i];
             let is_valid = true;
 
             for (let j = 0; j < column_must_not_null.length; j++) {
-                let field = column_must_not_null[j];
+                const field = column_must_not_null[j];
                 if (!Object.keys(row).includes(field)) {
                     is_valid = false;
                     break;
@@ -29,11 +29,11 @@ export class DonationClassifier {
         }
 
         // drop duplicate data
-        let unique_data = [];
-        let unique_data_map: { [key: string]: boolean } = {};
+        const unique_data = [];
+        const unique_data_map: { [key: string]: boolean } = {};
         for (let i = 0; i < data.length; i++) {
-            let row = data[i];
-            let key = row['nama'] + row['zis'] + row['nominal'] + row['tanggal'];
+            const row = data[i];
+            const key = `${row['nama'] ?? ''}${row['zis'] ?? ''}${row['nominal'] ?? ''}${row['tanggal'] ?? ''}`;
             if (!unique_data_map[key]) {
                 unique_data.push(row);
                 unique_data_map[key] = true;
@@ -42,7 +42,7 @@ export class DonationClassifier {
 
         // add new kategori where zis == 'zakat' else 'infaq'
         for (let i = 0; i < unique_data.length; i++) {
-            let row = unique_data[i];
+            const row = unique_data[i];
             if (row['zis'] == 'Zakat') {
                 row['kategori'] = 'Zakat';
             } else {
@@ -55,9 +55,17 @@ export class DonationClassifier {
 
     kategori_muzaki(row: KeyValue): string {
         if (row['kategori'] === 'Zakat') {
-            return row['nominal'] >= 1000000 ? 'Besar' : 'Kecil';
+            const nominal = row['nominal'];
+            if (typeof nominal === 'number' && nominal !== null) {
+                return nominal >= 1000000 ? 'Besar' : 'Kecil';
+            }
+            return 'Tidak Diketahui';
         } else if (row['kategori'] === 'Infaq') {
-            return row['nominal'] >= 500000 ? 'Besar' : 'Kecil';
+            const nominal = row['nominal'];
+            if (typeof nominal === 'number' && nominal !== null) {
+                return nominal >= 500000 ? 'Besar' : 'Kecil';
+            }
+            return 'Tidak Diketahui';
         }
         else {
             return 'Tidak Diketahui';
@@ -67,7 +75,7 @@ export class DonationClassifier {
     classify_frequency(data: KeyValue[]): KeyValue[] {
         data.forEach(row => {
             row['c2'] = 'Jarang';
-            const date = new Date(row['tanggal']);
+            const date = row['tanggal'] ? new Date(row['tanggal'] as string | number) : new Date();
             row['month'] = date.getMonth() + 1;
             row['year'] = date.getFullYear();
         });
@@ -87,7 +95,7 @@ export class DonationClassifier {
         });
 
         data.forEach(row => {
-            if (row['kategori'] === 'Infaq' && row['count'] >= 3) {
+            if (row['kategori'] === 'Infaq' && typeof row['count'] === 'number' && row['count'] >= 3) {
                 row['c2'] = 'Sering';
             }
         });
@@ -109,7 +117,7 @@ export class DonationClassifier {
         data.forEach(row => {
             row['c1'] = this.kategori_muzaki(row);
 
-            if (row['kategori'] === 'Zakat' && row['yearlyCount'] >= 3) {
+            if (row['kategori'] === 'Zakat' && typeof row['yearlyCount'] === 'number' && row['yearlyCount'] >= 3) {
                 row['c2'] = 'Sering';
             }
 

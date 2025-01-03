@@ -1,10 +1,6 @@
 import React, { useMemo } from 'react'
 import { ChevronDownIcon } from '@heroicons/react/24/outline'
-
-type MonthFilterProps = {
-  selectedMonth: number | null
-  handleMonthChange: (e: React.ChangeEvent<HTMLSelectElement>) => void
-}
+import { MonthFilterProps } from '@/lib/types'
 
 const MonthFilter: React.FC<MonthFilterProps> = ({ selectedMonth, handleMonthChange }) => {
   const monthOptions = useMemo(() => {

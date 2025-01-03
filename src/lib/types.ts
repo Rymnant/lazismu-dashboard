@@ -1,3 +1,4 @@
+// Sidebar related types
 export type SidebarItem = {
   name: string
   icon: string
@@ -6,17 +7,81 @@ export type SidebarItem = {
   isActive?: boolean
 }
 
+// Loyalty Badge related types
 export type LoyaltyBadge = {
   type: 'Sporadic' | 'Regular' | 'Generous' | 'Major'
   count: number
   image: string
 }
 
+// File Upload Modal related types
+export type FileUploadModalProps = {
+  isOpen: boolean
+  onClose: () => void
+  onUploadSuccess: () => void
+}
+
+// Filter related types
+export type MonthFilterProps = {
+  selectedMonth: number | null
+  handleMonthChange: (e: React.ChangeEvent<HTMLSelectElement>) => void
+}
+
+export type YearFilterProps = {
+  selectedYear: number | null
+  handleYearChange: (e: React.ChangeEvent<HTMLSelectElement>) => void
+  journalEntries: JournalEntry[]
+}
+
+// Pagination related types
+export type PaginationProps = {
+  currentPage: number
+  totalPages: number
+  onPageChange: (page: number) => void
+  siblingCount?: number
+  totalItems: number
+}
+
+// Search Bar related types
+export type SearchBarProps = {
+  searchTerm: string
+  onSearchChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+  onClearSearch: () => void
+}
+
+// Chart Section related types
+export type ChartSectionProps = {
+  filteredMuzakki: Muzakki[];
+}
+
+// Journal related types
+export type JournalTableProps = {
+  entries: JournalEntry[],
+  currentPage: number,
+  onDeleteSuccess: () => void
+}
+
 export type JournalEntry = {
   id: number;
   name: string;
-};
+}
 
+export type JurnalRow = {
+  id: number;
+  name: string;
+}
+
+export type JurnalDataRow = {
+  id: number,
+  nama: string,
+  no_hp: string,
+  zis: string,
+  via: string,
+  tahun: number,
+  jenis_donatur: string
+}
+
+// Muzakki related types
 export type Muzakki = {
   id: number
   name: string
@@ -30,4 +95,5 @@ export type Muzakki = {
   year: number
 }
 
+// Donor Type related types
 export type DonorType = 'Momentum' | 'Kecil Jarang' | 'Kecil Sering' | 'Besar Jarang' | 'Besar Sering'

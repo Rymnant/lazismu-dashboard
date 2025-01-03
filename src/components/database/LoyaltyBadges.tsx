@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 import Image from 'next/image';
 import { LoyaltyBadge } from '@/lib/types';
 

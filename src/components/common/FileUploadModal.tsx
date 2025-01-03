@@ -7,12 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { toast } from '@/hooks/use-toast'
-
-type FileUploadModalProps = {
-  isOpen: boolean
-  onClose: () => void
-  onUploadSuccess: () => void
-}
+import { FileUploadModalProps } from '@/lib/types'
 
 export function FileUploadModal({ isOpen, onClose, onUploadSuccess }: FileUploadModalProps) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null)

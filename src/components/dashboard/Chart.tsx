@@ -1,9 +1,6 @@
+import React from "react";
 import { Bar, Pie } from "react-chartjs-2";
-import { Muzakki } from "@/lib/types";
-
-type ChartSectionProps = {
-  filteredMuzakki: Muzakki[];
-};
+import { Muzakki, ChartSectionProps } from "@/lib/types";
 
 const ChartSection = ({ filteredMuzakki }: ChartSectionProps) => {
   const barDataDonationType = {
