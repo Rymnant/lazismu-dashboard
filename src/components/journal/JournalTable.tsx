@@ -6,13 +6,9 @@ import { deleteJurnal, getJurnalDataById } from '@/api/database';
 import Pagination from '@/components/common/Pagination';
 import { paginateJournalEntries } from '@/lib/utils';
 
-export default function JournalTable({ entries, onDeleteSuccess, selectedJournal, setSelectedJournal, searchTerm }: JournalTableProps) {
+export default function JournalTable({ onDeleteSuccess, selectedJournal, setSelectedJournal, filteredEntries, searchTerm }: JournalTableProps) {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const ITEMS_PER_PAGE = 6;
-
-  const filteredEntries = useMemo(() => {
-    return entries.filter(entry => entry.name.toLowerCase().includes(searchTerm.toLowerCase()));
-  }, [entries, searchTerm]);
 
   const totalPages = useMemo(() => Math.ceil(filteredEntries.length / ITEMS_PER_PAGE), [filteredEntries]);
   const currentEntries = useMemo(() => paginateJournalEntries(filteredEntries, currentPage, ITEMS_PER_PAGE), [filteredEntries, currentPage]);
@@ -36,7 +32,7 @@ export default function JournalTable({ entries, onDeleteSuccess, selectedJournal
   return (
     <div className="overflow-x-auto">
       {selectedJournal ? (
-        <JournalDetailTable journal={selectedJournal} />
+        <JournalDetailTable journal={selectedJournal} searchTerm={searchTerm} />
       ) : (
         <>
           <table className="min-w-full divide-y divide-gray-200">

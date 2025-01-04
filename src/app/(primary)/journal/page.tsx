@@ -14,17 +14,26 @@ import { JournalEntry } from '@/lib/types';
 export default function JournalPage() {
   const { searchTerm, setSearchTerm, isModalOpen, setIsModalOpen,
           selectedYear, setSelectedYear, selectedMonth, setSelectedMonth, journalEntries,
-          clearFilters, fetchJournalEntries
+          clearFilters, fetchJournalEntries, filteredEntries
         } = useJournalEntries();
 
   const [selectedJournal, setSelectedJournal] = useState<JournalEntry | null>(null);
+  const [detailSearchTerm, setDetailSearchTerm] = useState<string>('');
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value);
+    if (selectedJournal) {
+      setDetailSearchTerm(e.target.value);
+    } else {
+      setSearchTerm(e.target.value);
+    }
   };
 
   const clearSearch = () => {
-    setSearchTerm('');
+    if (selectedJournal) {
+      setDetailSearchTerm('');
+    } else {
+      setSearchTerm('');
+    }
   };
 
   const handleFilterChange = (filterType: 'year' | 'month', value: string) => {
@@ -44,10 +53,18 @@ export default function JournalPage() {
 
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 space-y-4 sm:space-y-0">
         <div className="flex flex-wrap items-center space-x-4">
-          <YearFilter selectedYear={selectedYear} handleYearChange={(e) => handleFilterChange('year', e.target.value || '')} journalEntries={journalEntries} />
-          <MonthFilter selectedMonth={selectedMonth} handleMonthChange={(e) => handleFilterChange('month', e.target.value || '')} />
+          <YearFilter 
+            selectedYear={selectedYear} 
+            handleYearChange={(e) => handleFilterChange('year', e.target.value || '')} 
+            journalEntries={journalEntries} 
+            disabled={!!selectedJournal}
+          />
+          <MonthFilter 
+            selectedMonth={selectedMonth} 
+            handleMonthChange={(e) => handleFilterChange('month', e.target.value || '')} 
+            disabled={!!selectedJournal}
+          />
           
-          {/* Back button */}
           {selectedJournal && (
             <button
               onClick={() => setSelectedJournal(null)}
@@ -70,7 +87,7 @@ export default function JournalPage() {
         </div>
 
         <div className="flex items-center w-full sm:w-auto">
-          <SearchBar searchTerm={searchTerm} onSearchChange={handleSearchChange} onClearSearch={clearSearch} />
+          <SearchBar searchTerm={selectedJournal ? detailSearchTerm : searchTerm} onSearchChange={handleSearchChange} onClearSearch={clearSearch} />
           <button
             onClick={() => setIsModalOpen(true)}
             className="ml-4 bg-orange-500 text-white rounded-md px-4 py-2 text-sm font-medium hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
@@ -82,7 +99,15 @@ export default function JournalPage() {
 
       <div className="bg-white shadow overflow-hidden sm:rounded-lg">
         <div className="overflow-x-auto">
-          <JournalTable entries={journalEntries} currentPage={1} onDeleteSuccess={fetchJournalEntries} selectedJournal={selectedJournal} setSelectedJournal={setSelectedJournal} searchTerm={searchTerm} />
+          <JournalTable 
+            entries={journalEntries} 
+            currentPage={1} 
+            onDeleteSuccess={fetchJournalEntries} 
+            selectedJournal={selectedJournal} 
+            setSelectedJournal={setSelectedJournal} 
+            searchTerm={selectedJournal ? detailSearchTerm : searchTerm}
+            filteredEntries={filteredEntries}
+          />
         </div>
       </div>
 

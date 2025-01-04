@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { JournalDetailTableProps } from '@/lib/types';
 import Pagination from '../common/Pagination';
 
-export default function JournalDetailTable({ journal }: JournalDetailTableProps) {
+export default function JournalDetailTable({ journal, searchTerm }: JournalDetailTableProps & { searchTerm: string }) {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
@@ -10,13 +10,22 @@ export default function JournalDetailTable({ journal }: JournalDetailTableProps)
     return null;
   }
 
-  const totalItems = journal.JurnalData.length;
+  const filteredData = journal.JurnalData.filter(data => 
+    data.nama.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    data.no_hp.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    data.zis.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    data.via.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    data.tahun.toString().includes(searchTerm.toLowerCase()) ||
+    data.jenis_donatur.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const totalItems = filteredData.length;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
-  const currentData = journal.JurnalData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+  const currentData = filteredData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   return (
-    <div className="mt-4">
-      <table className="min-w-full divide-y divide-gray-200 mt-2">
+    <div>
+      <table className="min-w-full divide-y divide-gray-200">
         <thead className="bg-gray-50">
           <tr>
             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Nama</th>
