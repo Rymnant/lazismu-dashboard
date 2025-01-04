@@ -59,11 +59,15 @@ export type JournalTableProps = {
   entries: JournalEntry[],
   currentPage: number,
   onDeleteSuccess: () => void
+  selectedJournal: JournalEntry | null
+  setSelectedJournal: (journal: JournalEntry | null) => void
+  searchTerm: string
 }
 
 export type JournalEntry = {
   id: number;
   name: string;
+  JurnalData: JurnalDataRow[];
 }
 
 export type JurnalRow = {
@@ -79,6 +83,10 @@ export type JurnalDataRow = {
   via: string,
   tahun: number,
   jenis_donatur: string
+}
+
+export interface JournalDetailTableProps {
+  journal: JournalEntry;
 }
 
 // Muzakki related types

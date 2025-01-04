@@ -27,6 +27,18 @@ export async function getJurnal() {
     }
 }
 
+export async function getJurnalDataById(id: number) {
+    try {
+        const res = await fetch(API_HOST + '/api/jurnal?id=' + id);
+        if (!res.ok) throw new Error('Failed to fetch jurnal data');
+        const data = await res.json();
+        return data.data;
+    } catch (err) {
+        console.error(err);
+        return [];
+    }
+}
+
 export async function deleteJurnal(id: number) {
     try {
         const res = await fetch(API_HOST + '/api/jurnal?id=' + id, {
