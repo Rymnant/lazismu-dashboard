@@ -1,14 +1,16 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { PlusIcon, XCircleIcon, ArrowLeftIcon } from '@heroicons/react/24/outline';
 import SearchBar from '@/components/common/SearchBar';
 import JournalTable from '@/components/journal/JournalTable';
+import JournalDetailTable from '@/components/journal/JournalDetailTable';
 import FileUploadModal from '@/components/common/FileUploadModal';
 import Notifications from '@/components/common/Notifications';
 import { useJournalEntries } from '@/hooks/useJournalEntries';
 import YearFilter from '@/components/common/YearFilter';
 import MonthFilter from '@/components/common/MonthFilter';
+import Pagination from '@/components/common/Pagination';
 import { JournalEntry } from '@/lib/types';
 
 export default function JournalPage() {
@@ -19,6 +21,10 @@ export default function JournalPage() {
 
   const [selectedJournal, setSelectedJournal] = useState<JournalEntry | null>(null);
   const [detailSearchTerm, setDetailSearchTerm] = useState<string>('');
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [detailCurrentPage, setDetailCurrentPage] = useState<number>(1);
+  const ITEMS_PER_PAGE = 6;
+  const DETAIL_ITEMS_PER_PAGE = 10;
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (selectedJournal) {
@@ -43,6 +49,33 @@ export default function JournalPage() {
       setSelectedMonth(value === '' ? null : parseInt(value, 10));
     }
   };
+
+  const filteredDetailEntries = useMemo(() => {
+    if (!selectedJournal) return [];
+    return selectedJournal.JurnalData.filter(data => 
+      data.nama.toLowerCase().includes(detailSearchTerm.toLowerCase()) ||
+      data.no_hp.toLowerCase().includes(detailSearchTerm.toLowerCase()) ||
+      data.zis.toLowerCase().includes(detailSearchTerm.toLowerCase()) ||
+      data.via.toLowerCase().includes(detailSearchTerm.toLowerCase()) ||
+      data.tahun.toString().includes(detailSearchTerm.toLowerCase()) ||
+      data.jenis_donatur.toLowerCase().includes(detailSearchTerm.toLowerCase())
+    );
+  }, [selectedJournal, detailSearchTerm]);
+
+  const paginatedEntries = useMemo(() => {
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    const end = start + ITEMS_PER_PAGE;
+    return filteredEntries.slice(start, end);
+  }, [filteredEntries, currentPage]);
+
+  const paginatedDetailEntries = useMemo(() => {
+    const start = (detailCurrentPage - 1) * DETAIL_ITEMS_PER_PAGE;
+    const end = start + DETAIL_ITEMS_PER_PAGE;
+    return filteredDetailEntries.slice(start, end);
+  }, [filteredDetailEntries, detailCurrentPage]);
+
+  const totalPages = useMemo(() => Math.ceil(filteredEntries.length / ITEMS_PER_PAGE), [filteredEntries]);
+  const totalDetailPages = useMemo(() => Math.ceil(filteredDetailEntries.length / DETAIL_ITEMS_PER_PAGE), [filteredDetailEntries]);
 
   return (
     <div className="p-6" style={{ color: 'black' }}>
@@ -99,17 +132,37 @@ export default function JournalPage() {
 
       <div className="bg-white shadow overflow-hidden sm:rounded-lg">
         <div className="overflow-x-auto">
-          <JournalTable 
-            entries={journalEntries} 
-            currentPage={1} 
-            onDeleteSuccess={fetchJournalEntries} 
-            selectedJournal={selectedJournal} 
-            setSelectedJournal={setSelectedJournal} 
-            searchTerm={selectedJournal ? detailSearchTerm : searchTerm}
-            filteredEntries={filteredEntries}
-          />
+          {selectedJournal ? (
+            <JournalDetailTable journal={selectedJournal} entries={paginatedDetailEntries} searchTerm={searchTerm} />
+          ) : (
+            <JournalTable 
+              entries={paginatedEntries} 
+              currentPage={currentPage} 
+              onDeleteSuccess={fetchJournalEntries} 
+              selectedJournal={selectedJournal} 
+              setSelectedJournal={setSelectedJournal} 
+              searchTerm={searchTerm}
+              filteredEntries={filteredEntries}
+            />
+          )}
         </div>
       </div>
+
+      {selectedJournal ? (
+        <Pagination 
+          currentPage={detailCurrentPage} 
+          totalPages={totalDetailPages} 
+          onPageChange={setDetailCurrentPage} 
+          totalItems={filteredDetailEntries.length}
+        />
+      ) : (
+        <Pagination 
+          currentPage={currentPage} 
+          totalPages={totalPages} 
+          onPageChange={setCurrentPage} 
+          totalItems={filteredEntries.length}
+        />
+      )}
 
       {isModalOpen && (
         <FileUploadModal

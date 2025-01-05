@@ -30,7 +30,6 @@ export function useJournalEntries() {
     setCurrentPage(1)
   }, [])
 
-
   return {
     searchTerm, setSearchTerm,
     currentPage, setCurrentPage,

@@ -1,30 +1,13 @@
-import React, { useState } from 'react';
-import { JournalDetailTableProps } from '@/lib/types';
-import Pagination from '../common/Pagination';
+import React from 'react';
+import { JournalDetailTableProps, JurnalDataRow } from '@/lib/types';
 
-export default function JournalDetailTable({ journal, searchTerm }: JournalDetailTableProps & { searchTerm: string }) {
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
-
+export default function JournalDetailTable({ journal, entries }: JournalDetailTableProps & { searchTerm: string, entries: JurnalDataRow[] }) {
   if (!journal || !journal.JurnalData) {
     return null;
   }
 
-  const filteredData = journal.JurnalData.filter(data => 
-    data.nama.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    data.no_hp.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    data.zis.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    data.via.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    data.tahun.toString().includes(searchTerm.toLowerCase()) ||
-    data.jenis_donatur.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const totalItems = filteredData.length;
-  const totalPages = Math.ceil(totalItems / itemsPerPage);
-  const currentData = filteredData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
-
   return (
-    <div>
+    <div className='overflow-x-auto'>
       <table className="min-w-full divide-y divide-gray-200">
         <thead className="bg-gray-50">
           <tr>
@@ -37,7 +20,7 @@ export default function JournalDetailTable({ journal, searchTerm }: JournalDetai
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-200">
-          {currentData.map((data, index) => (
+          {entries.map((data, index) => (
             <tr key={index} className="hover:bg-gray-50">
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{data.nama}</td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{data.no_hp}</td>
@@ -49,12 +32,6 @@ export default function JournalDetailTable({ journal, searchTerm }: JournalDetai
           ))}
         </tbody>
       </table>
-      <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={setCurrentPage}
-        totalItems={totalItems}
-      />
     </div>
   );
 };
