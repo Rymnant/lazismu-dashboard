@@ -87,10 +87,6 @@ export async function POST(
     }
 
     try {
-        const res_jurnal = await Jurnal.create({
-            'name': attachment_name
-        }) as unknown as JurnalRow;
-
         const worksheet = exceldata.worksheets[0];
         const data = worksheet.getSheetValues();
 
@@ -139,14 +135,14 @@ export async function POST(
             const nominal = parseInt(data_iter[header_index['donasi']]);
 
             const row: KeyValue = {
-                ['nama']: data_iter[header_index['nama']].trim(),
-                ['no_hp']: data_iter[header_index['no']],
-                ['tanggal']: data_iter[header_index['tanggal']],
-                ['tahun']: tahun,
-                ['zis']: data_iter[header_index['zis']].trim(),
-                ['via']: data_iter[header_index['via']].trim(),
-                ['sumber_dana']: data_iter[header_index['sumber dana']].trim(),
-                ['nominal']: nominal
+                ['nama']: data_iter[header_index['nama']]?.trim() || '',
+                ['no_hp']: data_iter[header_index['no']] || '',
+                ['tanggal']: data_iter[header_index['tanggal']] || '',
+                ['tahun']: tahun || 0,
+                ['zis']: data_iter[header_index['zis']]?.trim() || '',
+                ['via']: data_iter[header_index['via']]?.trim() || '',
+                ['sumber_dana']: data_iter[header_index['sumber dana']]?.trim() || '',
+                ['nominal']: nominal || 0
             };
 
             row_data.push(row)
@@ -155,7 +151,9 @@ export async function POST(
         const classifier = new DonationClassifier();
         const classified_data = classifier.classify(row_data);
 
-        console.log(classified_data);
+        const res_jurnal = await Jurnal.create({
+            'name': attachment_name
+        }) as unknown as JurnalRow;
 
         // Insert to database
         for (let i = 0; i < classified_data.length; i++) {
