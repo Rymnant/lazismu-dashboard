@@ -25,14 +25,14 @@ export type FileUploadModalProps = {
 export type MonthFilterProps = {
   selectedMonth: number | null
   handleMonthChange: (e: React.ChangeEvent<HTMLSelectElement>) => void
-  disabled?: boolean // Add this line
+  disabled?: boolean
 }
 
 export type YearFilterProps = {
   selectedYear: number | null
   handleYearChange: (e: React.ChangeEvent<HTMLSelectElement>) => void
   journalEntries: JournalEntry[]
-  disabled?: boolean // Add this line
+  disabled?: boolean
 }
 
 // Pagination related types
@@ -90,7 +90,7 @@ export type JurnalDataRow = {
 
 export interface JournalDetailTableProps {
   journal: JournalEntry;
-  searchTerm: string; // Add this line
+  searchTerm: string;
 }
 
 // Muzakki related types

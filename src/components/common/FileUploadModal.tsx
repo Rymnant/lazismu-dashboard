@@ -34,6 +34,7 @@ export function FileUploadModal({ isOpen, onClose, onUploadSuccess }: FileUpload
       }
 
       const res = await uploadJurnal(data)
+      
       if (res) {
         toast({
           title: 'Upload successful',
@@ -42,13 +43,17 @@ export function FileUploadModal({ isOpen, onClose, onUploadSuccess }: FileUpload
         onUploadSuccess()
         onClose()
       } else {
-        throw new Error('Upload failed')
+        toast({
+          title: 'Upload failed',
+          description: 'There was an error uploading your file. Please try again.',
+          variant: 'destructive',
+        })
       }
     } catch (error) {
       console.error('Upload failed:', error)
       toast({
         title: 'Upload failed',
-        description: 'There was an error uploading your file. Please try again.',
+        description: `There was an error uploading your file: ${error}. Please try again.`,
         variant: 'destructive',
       })
     } finally {

@@ -1,3 +1,4 @@
+import { Toaster } from '@/components/ui/toaster'
 import './globals.css'
 import type { Metadata } from 'next'
 import React from 'react'
@@ -16,6 +17,7 @@ export default function RootLayout({
     <html lang="en">
       <body className="min-h-screen">
         {children}
+        <Toaster />
       </body>
     </html>
   )
