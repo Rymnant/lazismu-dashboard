@@ -1,46 +1,65 @@
-import React, { useMemo } from 'react';
 import Image from 'next/image';
-import { LoyaltyBadge } from '@/lib/types';
+import { useMemo } from 'react';
+import React from 'react';
 
-interface BadgeCardProps {
-  badge: LoyaltyBadge;
+interface Badge {
+  type: string;
+  count: number;
+  image: string;
 }
 
-function BadgeCard({ badge }: BadgeCardProps) {
-  return (
-    <div className="bg-white p-4 rounded-lg shadow flex flex-row">
-      <div className="basis-1/4 flex flex-col justify-center items-center">
-        <Image 
-          src={badge.image} 
-          alt={`${badge.type} badge`} 
-          width={50} 
-          height={50}
-        />
-        <p className="text-sm text-gray-500 mt-3">{badge.type}</p>
-      </div>
-      <div className="basis-3/4 text-center flex flex-col justify-center">
-        <p className="text-2xl font-bold">{badge.count}</p>
-        <p className="text-xs text-gray-400">Jumlah muzakki</p>
-      </div>
-    </div>
-  )
+interface BadgeCardProps {
+  badge: Badge;
 }
 
 interface LoyaltyBadgesProps {
   muzakkiData: { donorType: string }[];
 }
 
+function Card({children, className}: {children: React.ReactNode, className?: string}) {
+  return <div className={`bg-white rounded-lg shadow-md ${className}`}>{children}</div>
+}
+
+function BadgeCard({ badge }: BadgeCardProps) {
+  return (
+    <Card className="p-4 sm:p-6 w-full">
+      <div className="flex items-start justify-between mb-2 sm:mb-4">
+        <div className="flex items-center justify-center">
+          <div className="relative">
+            <div className="flex items-center justify-center">
+              <Image 
+                src={badge.image} 
+                alt={`${badge.type} badge`} 
+                width={50} 
+                height={50}
+                className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20"
+              />
+            </div>
+          </div>
+        </div>
+        <div className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold text-gray-600">
+          {badge.count}
+        </div>
+      </div>
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between text-gray-500 text-xs sm:text-sm">
+        <span className="mb-1 sm:mb-0">{badge.type}</span>
+        <span className="hidden sm:inline">Jumlah muzakki</span>
+      </div>
+    </Card>
+  )
+}
+
 export default function LoyaltyBadges({ muzakkiData }: LoyaltyBadgesProps) {
-  const loyaltyBadges: LoyaltyBadge[] = useMemo(() => {
+  const loyaltyBadges: Badge[] = useMemo(() => {
     const calculateBadgeCount = (type: string) => {
       switch (type) {
-        case 'Sporadic':
+        case 'Kecil Jarang':
           return muzakkiData.filter(m => m.donorType === 'Kecil Jarang').length;
-        case 'Regular':
+        case 'Besar Jarang':
           return muzakkiData.filter(m => m.donorType === 'Besar Jarang').length;
-        case 'Generous':
+        case 'Kecil Sering':
           return muzakkiData.filter(m => m.donorType === 'Kecil Sering').length;
-        case 'Major':
+        case 'Besar Sering':
           return muzakkiData.filter(m => m.donorType === 'Besar Sering').length;
         default:
           return 0;
@@ -48,17 +67,17 @@ export default function LoyaltyBadges({ muzakkiData }: LoyaltyBadgesProps) {
     };
 
     return [
-      { type: 'Sporadic', count: calculateBadgeCount('Sporadic'), image: '/icon/sporadic.svg' },
-      { type: 'Regular', count: calculateBadgeCount('Regular'), image: '/icon/regular.svg' },
-      { type: 'Generous', count: calculateBadgeCount('Generous'), image: '/icon/generous.svg' },
-      { type: 'Major', count: calculateBadgeCount('Major'), image: '/icon/major.svg' },
+      { type: 'Kecil Jarang', count: calculateBadgeCount('Kecil Jarang'), image: '/icon/sporadic.svg' },
+      { type: 'Besar Jarang', count: calculateBadgeCount('Besar Jarang'), image: '/icon/regular.svg' },
+      { type: 'Kecil Sering', count: calculateBadgeCount('Kecil Sering'), image: '/icon/generous.svg' },
+      { type: 'Besar Sering', count: calculateBadgeCount('Besar Sering'), image: '/icon/major.svg' },
     ];
   }, [muzakkiData]);
 
   return (
     <section className="mb-6">
       <h2 className="text-lg font-medium mb-4">Loyalty Badges</h2>
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {loyaltyBadges.map((badge) => (
           <BadgeCard key={badge.type} badge={badge} />
         ))}
@@ -66,6 +85,4 @@ export default function LoyaltyBadges({ muzakkiData }: LoyaltyBadgesProps) {
     </section>
   )
 }
-
-
 

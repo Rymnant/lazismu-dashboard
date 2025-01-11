@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TrashIcon } from '@heroicons/react/24/outline';
+import { Download, Trash2 } from 'lucide-react';
 import { JournalTableProps } from '@/lib/types';
 import { deleteJurnal, getJurnalDataById } from '@/api/database';
 import { Skeleton } from "@/components/ui/skeleton";
@@ -58,19 +58,34 @@ export default function JournalTable({ onDeleteSuccess, setSelectedJournal, entr
                 <tr key={index} onClick={() => handleRowClick(entry.id)} className="cursor-pointer hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{index + 1}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{entry.name}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <button
+                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    {/* Delete Butston */}
+                    <div className="flex space-x-4">
+                      <button
                       onClick={(e) => {
                         e.stopPropagation();
                         handleDelete(entry.id);
                       }}
                       className="text-orange-600 hover:text-orange-900 flex items-center space-x-2 rounded-sm outline outline-gray-200 outline-1 outline-offset-4"
                       disabled={isLoading}
-                    >
-                      <TrashIcon className="h-5 w-5" />
+                      >
+                      <Trash2 className="h-5 w-5" />
                       <span style={{ color: 'black' }}>Hapus</span>
-                    </button>
-                  </td>
+                      </button>
+
+                      {/* Download Button */}
+                      <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        window.location.href = `/api/jurnal/download/${entry.id}`;
+                      }}
+                      className="text-orange-600 hover:text-blue-900 flex items-center space-x-2 rounded-sm outline outline-gray-200 outline-1 outline-offset-4"
+                      >
+                      <Download className="h-5 w-5" />
+                      <span style={{ color: 'black' }}>Unduh</span>
+                      </button>
+                    </div>
+                    </td>
                 </tr>
               ))
             )}

@@ -9,7 +9,7 @@ export type SidebarItem = {
 
 // Loyalty Badge related types
 export type LoyaltyBadge = {
-  type: 'Sporadic' | 'Regular' | 'Generous' | 'Major'
+  type: 'Kecil Jarang' | 'Besar Jarang' | 'Kecil Sering' | 'Besar Sering'
   count: number
   image: string
 }
@@ -106,6 +106,3 @@ export type Muzakki = {
   status: string
   year: number
 }
-
-// Donor Type related types
-export type DonorType = 'Momentum' | 'Kecil Jarang' | 'Kecil Sering' | 'Besar Jarang' | 'Besar Sering'
