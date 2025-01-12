@@ -90,6 +90,18 @@ export async function GET(
         { header: 'Jenis Donatur', key: 'jenis_donatur' },
     ];
 
+    worksheet.getRow(1).eachCell((cell) => {
+        cell.fill = {
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: { argb: 'FF000000' }, // Black color
+        };
+        cell.font = {
+            color: { argb: 'FFFFFFFF' }, // White color
+            bold: true
+        };
+    });
+
     jurnal_data.forEach(row => {
         worksheet.addRow({
             nama: row.nama,
