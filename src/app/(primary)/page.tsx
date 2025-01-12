@@ -5,20 +5,30 @@ import Notifications from "@/components/common/Notifications";
 import ChartSection from "@/components/dashboard/Chart";
 import { getMuzakki } from "@/api/database";
 import { Muzakki } from "@/lib/types";
+import YearFilter from "@/components/common/YearFilter";
 
 export default function DashboardPage() {
-  const[muzakkiData, setMuzakkiData] = useState<Muzakki[]>([]);
+  const [muzakkiData, setMuzakkiData] = useState<Muzakki[]>([]);
+  const [selectedYear, setSelectedYear] = useState<number | null>(null);
 
   const fetchMuzakkiData = async () => {
     const data = await getMuzakki();
     setMuzakkiData(data);
-  }
+  };
 
   useEffect(() => {
     fetchMuzakkiData();
   }, []);
 
   const totalMuzakki = muzakkiData.length;
+
+  const handleYearChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedYear(Number(e.target.value));
+  };
+
+  const filteredMuzakkiData = selectedYear
+    ? muzakkiData.filter((item) => item.year === selectedYear)
+    : muzakkiData;
 
   return (
     <main className="p-6">
@@ -30,7 +40,11 @@ export default function DashboardPage() {
       {/*Filter Section*/}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 space-y-4 sm:space-y-0">
         <div className="flex flex-wrap items-center space-x-4">
-          {/* <YearFilter/> */} Filter
+          <YearFilter
+            selectedYear={selectedYear}
+            handleYearChange={handleYearChange}
+            yearOptions={[...new Set(muzakkiData.map((item) => item.year.toString()))]}
+          />
         </div>
         <div className="flex items-center w-full sm:w-auto">
           {/* <SearchBar/> */} Search
@@ -47,7 +61,7 @@ export default function DashboardPage() {
           </div>
         </div>
       </div>
-      <ChartSection data={muzakkiData} />
+      <ChartSection data={filteredMuzakkiData} />
     </main>
   );
 }

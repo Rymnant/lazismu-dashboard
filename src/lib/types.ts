@@ -31,7 +31,7 @@ export type MonthFilterProps = {
 export type YearFilterProps = {
   selectedYear: number | null
   handleYearChange: (e: React.ChangeEvent<HTMLSelectElement>) => void
-  journalEntries: JournalEntry[]
+  yearOptions: string[];
   disabled?: boolean
 }
 

@@ -39,7 +39,12 @@ export const paginateJournalEntries = (journalEntries: JournalEntry[], currentPa
   return paginateData(journalEntries, currentPage, itemsPerPage)
 }
 
-export function useFilteredEntries(entries: JournalEntry[], searchTerm: string, selectedYear: number | null, selectedMonth: number | null) {
+export function useFilteredEntries<T extends { name: string }>(
+  entries: T[], 
+  searchTerm: string, 
+  selectedYear: number | null, 
+  selectedMonth: number | null
+) {
   return useMemo(() => {
     return entries.filter((entry) => {
       const matchesSearch = entry.name.toLowerCase().includes(searchTerm.toLowerCase());
@@ -51,3 +56,7 @@ export function useFilteredEntries(entries: JournalEntry[], searchTerm: string, 
     });
   }, [entries, searchTerm, selectedYear, selectedMonth]);
 }
+
+export const getUniqueYears = (entries: { name: string }[]): string[] => {
+  return Array.from(new Set(entries.map(entry => entry.name.match(/\d{4}/)?.[0]))).filter(Boolean) as string[];
+};

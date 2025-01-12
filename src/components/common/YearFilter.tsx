@@ -1,12 +1,8 @@
-import React, { useMemo } from 'react'
-import { ChevronDownIcon } from '@heroicons/react/24/outline'
-import { YearFilterProps } from '@/lib/types'
+import React from 'react';
+import { ChevronDownIcon } from '@heroicons/react/24/outline';
+import { YearFilterProps } from '@/lib/types';
 
-const YearFilter: React.FC<YearFilterProps & { disabled?: boolean }> = ({ selectedYear, handleYearChange, journalEntries, disabled }) => {
-  const yearOptions = useMemo(() => {
-    return Array.from(new Set(journalEntries.map(entry => entry.name.match(/\d{4}/)?.[0]))).filter(Boolean)
-  }, [journalEntries])
-
+const YearFilter: React.FC<YearFilterProps & { yearOptions: string[], disabled?: boolean }> = ({ selectedYear, handleYearChange, yearOptions, disabled }) => {
   return (
     <div className="relative" style={{ color: 'black' }}>
       <select
@@ -22,7 +18,7 @@ const YearFilter: React.FC<YearFilterProps & { disabled?: boolean }> = ({ select
       </select>
       <ChevronDownIcon className="absolute right-3 top-2.5 h-5 w-5 text-gray-400" />
     </div>
-  )
-}
+  );
+};
 
-export default YearFilter
+export default YearFilter;

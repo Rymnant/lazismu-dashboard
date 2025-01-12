@@ -12,6 +12,7 @@ import YearFilter from '@/components/common/YearFilter';
 import MonthFilter from '@/components/common/MonthFilter';
 import Pagination from '@/components/common/Pagination';
 import { JournalEntry } from '@/lib/types';
+import { getUniqueYears } from '@/lib/utils';
 
 export default function JournalPage() {
   const { searchTerm, setSearchTerm, isModalOpen, setIsModalOpen,
@@ -77,6 +78,8 @@ export default function JournalPage() {
   const totalPages = useMemo(() => Math.ceil(filteredEntries.length / ITEMS_PER_PAGE), [filteredEntries]);
   const totalDetailPages = useMemo(() => Math.ceil(filteredDetailEntries.length / DETAIL_ITEMS_PER_PAGE), [filteredDetailEntries]);
 
+  const yearOptions = useMemo(() => getUniqueYears(journalEntries), [journalEntries]);
+
   return (
     <div className="p-6" style={{ color: 'black' }}>
       <div className="flex justify-between items-center mb-6">
@@ -89,7 +92,7 @@ export default function JournalPage() {
           <YearFilter 
             selectedYear={selectedYear} 
             handleYearChange={(e) => handleFilterChange('year', e.target.value || '')} 
-            journalEntries={journalEntries} 
+            yearOptions={yearOptions} 
             disabled={!!selectedJournal}
           />
           <MonthFilter 
