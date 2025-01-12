@@ -77,7 +77,7 @@ export default function JournalTable({ onDeleteSuccess, setSelectedJournal, entr
                       <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        window.location.href = `/api/jurnal/download/${entry.id}`;
+                        window.location.href = `/api/download?id=${entry.id}`;
                       }}
                       className="text-orange-600 hover:text-blue-900 flex items-center space-x-2 rounded-sm outline outline-gray-200 outline-1 outline-offset-4"
                       >
