@@ -26,6 +26,17 @@ export default function DashboardPage() {
         <h1 className="text-3xl font-semibold">Dashboard</h1>
         <Notifications />
       </div>
+
+      {/*Filter Section*/}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 space-y-4 sm:space-y-0">
+        <div className="flex flex-wrap items-center space-x-4">
+          {/* <YearFilter/> */} Filter
+        </div>
+        <div className="flex items-center w-full sm:w-auto">
+          {/* <SearchBar/> */} Search
+        </div>
+      </div>
+
       <div className="max-w-64 overflow-hidden rounded-xl bg-white shadow-lg my-5">
         <div className="flex items-center justify-between">
           <div className="p-4">
