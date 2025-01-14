@@ -2,10 +2,38 @@ import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 import { Muzakki, JournalEntry } from './types'
 import { useMemo } from 'react'
+import { Chart } from 'chart.js';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
+
+// Download chart as image
+export const downloadChart = (chartRef: Chart | null, fileName: string) => {
+  if (chartRef) {
+    const link = document.createElement('a');
+    link.download = fileName;
+    link.href = chartRef.toBase64Image();
+    link.click();
+  }
+};
+
+export const downloadCardWithChart = (cardRef: HTMLElement | null, fileName: string) => {
+  if (cardRef) {
+    import('html-to-image').then((htmlToImage) => {
+      htmlToImage.toPng(cardRef)
+        .then((dataUrl) => {
+          const link = document.createElement('a');
+          link.download = fileName;
+          link.href = dataUrl;
+          link.click();
+        })
+        .catch((error) => {
+          console.error('Error generating image:', error);
+        });
+    });
+  }
+};
 
 // Generic filter function
 export const filterData = <T>(data: T[], searchTerm: string, keys: (keyof T)[]): T[] => {
@@ -60,3 +88,4 @@ export function useFilteredEntries<T extends { name: string }>(
 export const getUniqueYears = (entries: { name: string }[]): string[] => {
   return Array.from(new Set(entries.map(entry => entry.name.match(/\d{4}/)?.[0]))).filter(Boolean) as string[];
 };
+
