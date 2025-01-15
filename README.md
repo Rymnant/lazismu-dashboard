@@ -4,8 +4,8 @@ A system developed to categorize Muzakki (donors) in Lazismu with the aim of opt
 
 ## Table of Contents
 
--[Installation](#installation)
--[Usage](#usage)
+- [Installation](#installation)
+- [Usage](#usage)
 
 ## Installation
 
