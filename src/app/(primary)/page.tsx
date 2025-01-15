@@ -48,6 +48,13 @@ export default function DashboardPage() {
     .filter((item) => (selectedDonationType ? item.donationType === selectedDonationType : true))
     .filter((item) => (selectedGender ? item.gender === selectedGender : true));
 
+  const selectedFilters = {
+    year: selectedYear,
+    donorType: selectedDonorType,
+    donationType: selectedDonationType,
+    gender: selectedGender,
+  };
+
   return (
     <main className="p-6">
       <div className="flex justify-between items-center mb-6">
@@ -115,7 +122,7 @@ export default function DashboardPage() {
           </div>
         </div>
       </div>
-      <ChartSection data={filteredMuzakkiData} selectedGender={selectedGender} />
+      <ChartSection data={filteredMuzakkiData} selectedFilters={selectedFilters} />
     </main>
   );
 }

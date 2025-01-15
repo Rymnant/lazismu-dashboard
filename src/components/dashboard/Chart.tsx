@@ -23,13 +23,18 @@ const commonOptions = {
 
 interface ChartSectionProps {
   data: Muzakki[];
-  selectedGender: string | null;
+  selectedFilters: {
+    year: number | null;
+    donorType: string | null;
+    donationType: string | null;
+    gender: string | null;
+  };
 }
 
 const isDataEmpty = (data: number[]) => data.every(item => item === 0);
 
-const ChartSection: React.FC<ChartSectionProps> = ({ data, selectedGender }) => {
-  const filteredData = selectedGender ? data.filter((item) => item.gender === selectedGender) : data;
+const ChartSection: React.FC<ChartSectionProps> = ({ data, selectedFilters }) => {
+  const filteredData = selectedFilters.gender ? data.filter((item) => item.gender === selectedFilters.gender) : data;
 
   const yearlyLabels = Array.from(new Set(filteredData.map((item) => item.year))).sort();
   const yearlyTotalData = yearlyLabels.map((year) => filteredData.filter((item) => item.year === year).length);
@@ -108,171 +113,188 @@ const ChartSection: React.FC<ChartSectionProps> = ({ data, selectedGender }) => 
   const donationTypeCardRef = useRef<HTMLDivElement>(null);
   const donorTypeCardRef = useRef<HTMLDivElement>(null);
 
+  const getFileName = (baseName: string) => {
+    const { year, donorType, donationType, gender } = selectedFilters;
+    return `${baseName}${year ? `-${year}` : ''}${donorType ? `-${donorType}` : ''}${donationType ? `-${donationType}` : ''}${gender ? `-${gender}` : ''}.png`;
+  };
+
   return (
     <div className="space-y-8">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card ref={yearlyCardRef}>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle>Tahun</CardTitle>
-            {!isDataEmpty(yearlyTotalData) && (
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={() => downloadCardWithChart(yearlyCardRef.current, 'yearly-trend.png')}
-              >
-                <Download className="h-4 w-4" />
-              </Button>
-            )}
-          </CardHeader>
-          <CardContent>
-            {isDataEmpty(yearlyTotalData) ? (
-              <Alert variant="destructive" className="my-4">
-                <AlertCircle className="h-4 w-4" />
-                <AlertTitle>No Data Available</AlertTitle>
-                <AlertDescription>
-                  There is no data available for the selected filter.
-                </AlertDescription>
-              </Alert>
-            ) : (
-              <div className="h-[300px] relative">
-                <Line
-                  ref={yearlyChartRef as RefObject<ChartJS<"line">>}
-                  data={yearlyData}
-                  options={{
-                    ...commonOptions,
-                    scales: {
-                      y: {
-                        beginAtZero: true,
+        <div className="relative">
+          <Card ref={yearlyCardRef} className="space-y-4">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle>Tahun</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {isDataEmpty(yearlyTotalData) ? (
+                <Alert variant="destructive" className="my-4">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertTitle>No Data Available</AlertTitle>
+                  <AlertDescription>
+                    There is no data available for the selected filter.
+                  </AlertDescription>
+                </Alert>
+              ) : (
+                <div className="h-[300px] relative">
+                  <Line
+                    ref={yearlyChartRef as RefObject<ChartJS<"line">>}
+                    data={yearlyData}
+                    options={{
+                      ...commonOptions,
+                      scales: {
+                        y: {
+                          beginAtZero: true,
+                        },
                       },
-                    },
-                    maintainAspectRatio: false,
-                  }}
-                />
-              </div>
-            )}
-          </CardContent>
-        </Card>
+                      maintainAspectRatio: false,
+                    }}
+                  />
+                </div>
+              )}
+            </CardContent>
+          </Card>
+          {!isDataEmpty(yearlyTotalData) && (
+            <Button
+              variant="outline"
+              size="icon"
+              className="absolute top-3 right-3"
+              onClick={() => downloadCardWithChart(yearlyCardRef.current, getFileName('yearly-trend'))}
+            >
+              <Download className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
 
-        <Card ref={genderCardRef}>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle>Jenis Kelamin</CardTitle>
-            {!isDataEmpty(genderTotalData) && (
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={() => downloadCardWithChart(genderCardRef.current, 'gender.png')}
-              >
-                <Download className="h-4 w-4" />
-              </Button>
-            )}
-          </CardHeader>
-          <CardContent>
-            {isDataEmpty(genderTotalData) ? (
-              <Alert variant="destructive" className="my-4">
-                <AlertCircle className="h-4 w-4" />
-                <AlertTitle>No Data Available</AlertTitle>
-                <AlertDescription>
-                  There is no gender data available for the selected filter.
-                </AlertDescription>
-              </Alert>
-            ) : (
-              <div className="h-[300px] relative">
-                <Pie
-                  ref={genderChartRef as RefObject<ChartJS<"pie">>}
-                  data={genderData}
-                  options={{
-                    ...commonOptions,
-                    maintainAspectRatio: false,
-                  }}
-                />
-              </div>
-            )}
-          </CardContent>
-        </Card>
+        <div className="relative">
+          <Card ref={genderCardRef} className="space-y-4">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle>Jenis Kelamin</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {isDataEmpty(genderTotalData) ? (
+                <Alert variant="destructive" className="my-4">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertTitle>No Data Available</AlertTitle>
+                  <AlertDescription>
+                    There is no gender data available for the selected filter.
+                  </AlertDescription>
+                </Alert>
+              ) : (
+                <div className="h-[300px] relative">
+                  <Pie
+                    ref={genderChartRef as RefObject<ChartJS<"pie">>}
+                    data={genderData}
+                    options={{
+                      ...commonOptions,
+                      maintainAspectRatio: false,
+                    }}
+                  />
+                </div>
+              )}
+            </CardContent>
+          </Card>
+          {!isDataEmpty(genderTotalData) && (
+            <Button
+              variant="outline"
+              size="icon"
+              className="absolute top-3 right-3"
+              onClick={() => downloadCardWithChart(genderCardRef.current, getFileName('gender'))}
+            >
+              <Download className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
 
-        <Card ref={donationTypeCardRef}>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle>Jenis Donasi</CardTitle>
-            {!isDataEmpty(categorizedDonationTypeData) && (
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={() => downloadCardWithChart(donationTypeCardRef.current, 'donation-type.png')}
-              >
-                <Download className="h-4 w-4" />
-              </Button>
-            )}
-          </CardHeader>
-          <CardContent>
-            {isDataEmpty(categorizedDonationTypeData) ? (
-              <Alert variant="destructive" className="my-4">
-                <AlertCircle className="h-4 w-4" />
-                <AlertTitle>No Data Available</AlertTitle>
-                <AlertDescription>
-                  There is no donation type data available for the selected filter.
-                </AlertDescription>
-              </Alert>
-            ) : (
-              <div className="h-[300px] relative">
-                <Bar
-                  ref={donationTypeChartRef as RefObject<ChartJS<"bar">>}
-                  data={donationTypeData}
-                  options={{
-                    ...commonOptions,
-                    scales: {
-                      y: {
-                        beginAtZero: true,
+        <div className="relative">
+          <Card ref={donationTypeCardRef} className="space-y-4">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle>Jenis Donasi</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {isDataEmpty(categorizedDonationTypeData) ? (
+                <Alert variant="destructive" className="my-4">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertTitle>No Data Available</AlertTitle>
+                  <AlertDescription>
+                    There is no donation type data available for the selected filter.
+                  </AlertDescription>
+                </Alert>
+              ) : (
+                <div className="h-[300px] relative">
+                  <Bar
+                    ref={donationTypeChartRef as RefObject<ChartJS<"bar">>}
+                    data={donationTypeData}
+                    options={{
+                      ...commonOptions,
+                      scales: {
+                        y: {
+                          beginAtZero: true,
+                        },
                       },
-                    },
-                    maintainAspectRatio: false,
-                  }}
-                />
-              </div>
-            )}
-          </CardContent>
-        </Card>
+                      maintainAspectRatio: false,
+                    }}
+                  />
+                </div>
+              )}
+            </CardContent>
+          </Card>
+          {!isDataEmpty(categorizedDonationTypeData) && (
+            <Button
+              variant="outline"
+              size="icon"
+              className="absolute top-3 right-3"
+              onClick={() => downloadCardWithChart(donationTypeCardRef.current, getFileName('donation-type'))}
+            >
+              <Download className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
 
-        <Card ref={donorTypeCardRef}>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle>Jenis Donatur</CardTitle>
-            {!isDataEmpty(donorTypeTotalData) && (
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={() => downloadCardWithChart(donorTypeCardRef.current, 'donor-type.png')}
-              >
-                <Download className="h-4 w-4" />
-              </Button>
-            )}
-          </CardHeader>
-          <CardContent>
-            {isDataEmpty(donorTypeTotalData) ? (
-              <Alert variant="destructive" className="my-4">
-                <AlertCircle className="h-4 w-4" />
-                <AlertTitle>No Data Available</AlertTitle>
-                <AlertDescription>
-                  There is no donor type data available for the selected filter.
-                </AlertDescription>
-              </Alert>
-            ) : (
-              <div className="h-[300px] relative">
-                <Bar
-                  ref={donorTypeChartRef as RefObject<ChartJS<"bar">>}
-                  data={donorTypeData}
-                  options={{
-                    ...commonOptions,
-                    scales: {
-                      y: {
-                        beginAtZero: true,
+        <div className="relative">
+          <Card ref={donorTypeCardRef} className="space-y-4">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle>Jenis Donatur</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {isDataEmpty(donorTypeTotalData) ? (
+                <Alert variant="destructive" className="my-4">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertTitle>No Data Available</AlertTitle>
+                  <AlertDescription>
+                    There is no donor type data available for the selected filter.
+                  </AlertDescription>
+                </Alert>
+              ) : (
+                <div className="h-[300px] relative">
+                  <Bar
+                    ref={donorTypeChartRef as RefObject<ChartJS<"bar">>}
+                    data={donorTypeData}
+                    options={{
+                      ...commonOptions,
+                      scales: {
+                        y: {
+                          beginAtZero: true,
+                        },
                       },
-                    },
-                    maintainAspectRatio: false,
-                  }}
-                />
-              </div>
-            )}
-          </CardContent>
-        </Card>
+                      maintainAspectRatio: false,
+                    }}
+                  />
+                </div>
+              )}
+            </CardContent>
+          </Card>
+          {!isDataEmpty(donorTypeTotalData) && (
+            <Button
+              variant="outline"
+              size="icon"
+              className="absolute top-3 right-3"
+              onClick={() => downloadCardWithChart(donorTypeCardRef.current, getFileName('donor-type'))}
+            >
+              <Download className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
       </div>
     </div>
   );
