@@ -1,3 +1,5 @@
+"use server";
+
 import { JurnalData } from "@/db/db";
 import { JurnalDataRow } from "@/lib/types";
 

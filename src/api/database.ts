@@ -69,7 +69,6 @@ export async function uploadJurnal(data: MuzzakiJurnalUploadData): Promise<boole
         });
 
         const res_data = await res.json();
-        console.log(res_data);
 
         if (res_data.status === 'success') {
             return true;

@@ -1,3 +1,5 @@
+"use server";
+
 import { Jurnal, JurnalData } from "@/db/db";
 import * as exceljs from 'exceljs';
 

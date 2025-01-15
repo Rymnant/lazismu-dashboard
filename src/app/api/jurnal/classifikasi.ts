@@ -129,7 +129,6 @@ export class DonationClassifier {
 
     classify(data: KeyValue[]): KeyValue[] {
         data = this.preprocess_data(data);
-        console.log(data)
         data = this.classify_frequency(data);
 
         return data;

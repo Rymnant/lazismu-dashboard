@@ -1,3 +1,5 @@
+"use server";
+
 import { Jurnal, JurnalData } from "@/db/db";
 import * as exceljs from 'exceljs';
 import { Buffer } from 'buffer';
@@ -91,8 +93,8 @@ export async function POST(
         const data = worksheet.getSheetValues();
 
         const expected_headers = ['tanggal', 'tahun', 'zis', 'via', 'sumber dana', 'nama', 'donasi', 'no'];
-        let is_header_missing = false;
-        const missing_headers: string[] = [];
+        // let is_header_missing = false;
+        // const missing_headers: string[] = [];
 
         const header = data[1] as string[];
         const header_index: { [key: string]: number } = {};
@@ -108,40 +110,30 @@ export async function POST(
             header_index[header_name] = i;
         }
 
-        // Check for missing headers
+        // Check for missing headers and set to -1 in header_index if missing
         for (const expected_header of expected_headers) {
             if (!(expected_header in header_index)) {
-                is_header_missing = true;
-                missing_headers.push(expected_header);
+                // is_header_missing = true;
+                // missing_headers.push(expected_header);
+                header_index[expected_header] = -1; // Set to -1 if header is missing
             }
-        }
-
-        if (is_header_missing) {
-            return new Response(JSON.stringify({
-                status: 'error',
-                message: 'Invalid excel header, missing: ' + missing_headers.join(', ')
-            }), {
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
         }
 
         const row_data: KeyValue[] = [];
         for (let i = 2; i < data.length; i++) {
             const data_iter = data[i] as string[];
+            const tahun = header_index['tahun'] !== -1 ? parseInt(data_iter[header_index['tahun']]) : 0;
+            const nominal = header_index['donasi'] !== -1 ? parseInt(data_iter[header_index['donasi']]) : 0;
 
-            const tahun = parseInt(data_iter[header_index['tahun']]);
-            const nominal = parseInt(data_iter[header_index['donasi']]);
-
+            const no_hp_key = ['no hp', 'nomor hp', 'hp'].find(key => key in header_index) || '';
             const row: KeyValue = {
-                ['nama']: data_iter[header_index['nama']]?.trim() || '',
-                ['no_hp']: data_iter[header_index['no']] || '',
-                ['tanggal']: data_iter[header_index['tanggal']] || '',
+                ['nama']: header_index['nama'] !== -1 ? data_iter[header_index['nama']]?.trim() || '' : '',
+                ['no_hp']: header_index[no_hp_key] !== -1 ? data_iter[header_index[no_hp_key]] || '' : '',
+                ['tanggal']: header_index['tanggal'] !== -1 ? data_iter[header_index['tanggal']] || '' : '',
                 ['tahun']: tahun || 0,
-                ['zis']: data_iter[header_index['zis']]?.trim() || '',
-                ['via']: data_iter[header_index['via']]?.trim() || '',
-                ['sumber_dana']: data_iter[header_index['sumber dana']]?.trim() || '',
+                ['zis']: header_index['zis'] !== -1 ? data_iter[header_index['zis']]?.trim() || '' : '',
+                ['via']: header_index['via'] !== -1 ? data_iter[header_index['via']]?.trim() || '' : '',
+                ['sumber_dana']: header_index['sumber dana'] !== -1 ? data_iter[header_index['sumber dana']]?.trim() || '' : '',
                 ['nominal']: nominal || 0
             };
 

@@ -11,7 +11,7 @@ export default function JournalTable({ onDeleteSuccess, setSelectedJournal, entr
     setIsLoading(true);
     const success = await deleteJurnal(id);
     if (success) {
-      console.log(`Jurnal with id ${id} deleted successfully`);
+      // console.log(`Jurnal with id ${id} deleted successfully`);
       onDeleteSuccess();
     } else {
       console.error(`Failed to delete jurnal with id ${id}`);
@@ -23,7 +23,7 @@ export default function JournalTable({ onDeleteSuccess, setSelectedJournal, entr
     setIsLoading(true);
     const journal = await getJurnalDataById(id);
     setSelectedJournal(journal);
-    console.log(`Selected journal with name: ${journal.name}`);
+    // console.log(`Selected journal with name: ${journal.name}`);
     setIsLoading(false);
   };
 

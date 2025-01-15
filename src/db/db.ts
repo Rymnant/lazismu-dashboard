@@ -72,6 +72,4 @@ export const JurnalData = Database.define('JurnalData', {
 Jurnal.hasMany(JurnalData, { foreignKey: 'jurnal_id' });
 JurnalData.belongsTo(Jurnal, { foreignKey: 'jurnal_id' });
 
-Database.sync().then(() => {
-    console.log('Database synced');
-});
+Database.sync().then(() => {});

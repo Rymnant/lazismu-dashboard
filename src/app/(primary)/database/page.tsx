@@ -25,8 +25,6 @@ export default function DatabasePage() {
     fetchMuzzakiData()
   }, [])
 
-  console.log(muzakkiData)
-
   const filteredMuzakki = useMemo(() => filterMuzakki(muzakkiData, searchTerm), [muzakkiData, searchTerm])
 
   const totalPages = useMemo(() => Math.ceil(filteredMuzakki.length / ITEMS_PER_PAGE), [filteredMuzakki])
