@@ -4,7 +4,7 @@ import { YearFilterProps } from '@/lib/types';
 
 const YearFilter: React.FC<YearFilterProps & { yearOptions: string[], disabled?: boolean }> = ({ selectedYear, handleYearChange, yearOptions, disabled }) => {
   return (
-    <div className="relative" style={{ color: 'black' }}>
+    <div className="relative">
       <select
         value={selectedYear || ''}
         onChange={handleYearChange}
