@@ -1,10 +1,64 @@
 # Pengembangan Sistem Kategorisasi Muzakki untuk Optimalisasi Pengelolaan Donasi di Lazismu
 
-## How to Build and Run
-1. Install Node.js from [here](https://nodejs.org/en/download). Any version v22.x.x should work.
-2. During installation, make sure to install native build tools as well.
-3. Open CMD/Terminal in this folder, type `npm install`, and press Enter.
-4. Wait until the package installation is complete.
-5. Type `npm run build`, press Enter, and wait until it finishes.
-6. Type `npm run start` to start the server.
-7. The server should be listening at http://127.0.0.1:3000
+A system developed to categorize Muzakki (donors) in Lazismu with the aim of optimizing donation management. This system is designed to increase efficiency in donation distribution and facilitate the analysis of Muzakki profiles. The technology and methods used include donation data processing, donor segmentation, and the application of algorithms for optimization.
+
+## Table of Contents
+
+-[Installation](#installation)
+-[Usage](#usage)
+
+## Installation
+
+### Prerequisites
+
+- Node.js (>= 14), [here](https://nodejs.org/en/download)
+- pnpm
+
+### Steps
+
+1. Clone the repository:
+    ```sh
+    git clone https://github.com/yourusername/lazismu-dashboard.git
+    cd lazismu-dashboard
+    ```
+
+2. Install dependencies:
+    ```sh
+    pnpm install
+    ```
+
+## Usage
+
+### Running the Development Server
+
+To start the development server, run:
+```sh
+pnpm run dev
+```
+Open http://localhost:3000 or http://127.0.0.1:3000 with your browser to see the result.
+
+### Building for Production
+
+To build the project for production, run:
+```sh
+pnpm run build
+```
+
+### Starting the Production Server
+
+To start the production server, run:
+```sh
+pnpm run start
+```
+
+## Features
+
+1. User-friendly interface
+2. Data visualization
+3. Responsive design
+
+## Contributors
+
+<a href="https://github.com/Rymnant/lazismu-dashboard/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=Rymnant/lazismu-dashboard" />
+</a>
