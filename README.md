@@ -4,15 +4,15 @@ A system developed to categorize Muzakki (donors) in Lazismu with the aim of opt
 
 ## Table of Contents
 
--[Installation](#installation)
--[Usage](#usage)
+- [Installation](#installation)
+- [Usage](#usage)
 
 ## Installation
 
 ### Prerequisites
 
 - Node.js (>= 14), [here](https://nodejs.org/en/download)
-- pnpm
+- pnpm or npm
 
 ### Steps
 
@@ -27,6 +27,12 @@ A system developed to categorize Muzakki (donors) in Lazismu with the aim of opt
     pnpm install
     ```
 
+    or 
+
+    ```sh
+    npm install
+    ```
+
 ## Usage
 
 ### Running the Development Server
@@ -34,6 +40,12 @@ A system developed to categorize Muzakki (donors) in Lazismu with the aim of opt
 To start the development server, run:
 ```sh
 pnpm run dev
+```
+
+or
+
+```sh
+npm run dev
 ```
 Open http://localhost:3000 or http://127.0.0.1:3000 with your browser to see the result.
 
@@ -44,11 +56,22 @@ To build the project for production, run:
 pnpm run build
 ```
 
+or
+
+```sh
+npm run build
+```
 ### Starting the Production Server
 
 To start the production server, run:
 ```sh
 pnpm run start
+```
+
+or
+
+```sh
+npm run start
 ```
 
 ## Features
