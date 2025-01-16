@@ -24,6 +24,7 @@ export default function JournalPage() {
   const [detailSearchTerm, setDetailSearchTerm] = useState<string>('');
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [detailCurrentPage, setDetailCurrentPage] = useState<number>(1);
+  const [isLoading] = useState<boolean>(false); 
   const ITEMS_PER_PAGE = 6;
   const DETAIL_ITEMS_PER_PAGE = 10;
 
@@ -146,6 +147,7 @@ export default function JournalPage() {
               setSelectedJournal={setSelectedJournal} 
               searchTerm={searchTerm}
               filteredEntries={filteredEntries}
+              isLoading={isLoading}
             />
           )}
         </div>

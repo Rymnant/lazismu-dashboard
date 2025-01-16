@@ -65,6 +65,7 @@ export type JournalTableProps = {
   setSelectedJournal: (journal: JournalEntry | null) => void
   searchTerm: string
   filteredEntries: JournalEntry[]
+  isLoading: boolean
 }
 
 export type JournalEntry = {

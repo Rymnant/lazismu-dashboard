@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Download, Trash2 } from 'lucide-react';
 import { JournalTableProps } from '@/lib/types';
 import { deleteJurnal, getJurnalDataById } from '@/api/database';
@@ -6,6 +6,14 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export default function JournalTable({ onDeleteSuccess, setSelectedJournal, entries }: JournalTableProps) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    setIsLoading(true);
+    // Simulate a delay for loading data
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
+  }, [entries]);
 
   const handleDelete = async (id: number) => {
     setIsLoading(true);
@@ -40,7 +48,7 @@ export default function JournalTable({ onDeleteSuccess, setSelectedJournal, entr
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {isLoading ? (
-              Array.from({ length: entries.length }).map((_, index) => (
+              Array.from({ length: 5 }).map((_, index) => (
                 <tr key={index}>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <Skeleton className="h-4 w-8" />
