@@ -11,14 +11,15 @@ A system developed to categorize Muzakki (donors) in Lazismu with the aim of opt
 
 ### Prerequisites
 
-- Node.js (>= 14), [here](https://nodejs.org/en/download)
+- [Node.js](https://nodejs.org/en/download) (>= 14)
+- [Visual Studio Code](https://code.visualstudio.com/)
 - pnpm or npm
 
 ### Steps
 
 1. Clone the repository:
     ```sh
-    git clone https://github.com/yourusername/lazismu-dashboard.git
+    git clone https://github.com/Rymnant/lazismu-dashboard.git
     cd lazismu-dashboard
     ```
 
